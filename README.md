@@ -11,7 +11,7 @@ This repository serves as a personal knowledge base for tracking and organizing 
 ```
 daily-term/
 ├── YYYY/                  # Yearly directories
-│   └── month-term.txt     # Monthly term files (e.g., june-term.txt)
+│   └── month-term.md     # Monthly term files (e.g., june-term.md)
 ├── README.md             # This file
 ```
 example for write the term journal:
@@ -38,7 +38,7 @@ etc
 
 2. **Monthly Files**
 
-   - Each month has its own text file (e.g., `2025/june-term.txt`)
+   - Each month has its own text file (e.g., `2025/june-term.md`)
    - Keep related terms and notes together
    - Use markdown formatting for better readability
 
