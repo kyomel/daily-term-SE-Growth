@@ -14,6 +14,18 @@ daily-term/
 │   └── month-term.txt     # Monthly term files (e.g., june-term.txt)
 ├── README.md             # This file
 ```
+example for write the term journal:
+```
+day - 1{date based on calendar}
+## Clean Code
+- definition:
+- example:
+-----
+## Clean Architecture
+- definition:
+- example:
+etc
+```
 
 ## 📝 How to Use
 
@@ -22,6 +34,7 @@ daily-term/
    - Add new terms or notes to the current month's file
    - Use a consistent format for easy searching and reference
    - Include definitions, examples, or personal insights
+   - Use English for wrting terms or notes
 
 2. **Monthly Files**
 
