@@ -2,7 +2,9 @@ day - 28
 
 ## Polya Problem Solving Technique
 
-### definition: George Polya developed a systematic approach to problem-solving with four key steps:
+### definition:
+
+George Polya developed a systematic approach to problem-solving with four key steps:
 
 1. Understand the problem
    *What is the unknown?
