@@ -18,12 +18,16 @@ example for write the term journal:
 ```
 day - 1{date based on calendar}
 ## Clean Code
-- definition:
-- example:
+### definition:
+-text-
+### example:
+-text-
 -----
 ## Clean Architecture
 ### definition:
+-text-
 ### example:
+-text-
 etc
 ```
 
