@@ -22,8 +22,8 @@ day - 1{date based on calendar}
 - example:
 -----
 ## Clean Architecture
-- definition:
-- example:
+### definition:
+### example:
 etc
 ```
 
