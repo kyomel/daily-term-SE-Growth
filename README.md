@@ -1,6 +1,6 @@
 # 📚 Daily Term Journal SE Growth
 
-A simple and organized way to track and document important terms, concepts, and notes on a daily basis for SE Growth.
+A simple and organized way to track and document important terms, concepts, and notes on a daily basis for SE Growth. The deliver term is from Monday - Friday.
 
 ## 📋 Overview
 
@@ -14,7 +14,9 @@ daily-term/
 │   └── month-term.md     # Monthly term files (e.g., june-term.md)
 ├── README.md             # This file
 ```
+
 example for write the term journal:
+
 ```
 day - 1{date based on calendar}
 ## Clean Code
