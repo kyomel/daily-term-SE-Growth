@@ -1,6 +1,6 @@
 # 📚 Daily Term Journal SE Growth
 
-A simple and organized way to track and document important terms, concepts, and notes on a daily basis for SE Growth. The deliver term is from Monday - Friday.
+A simple and organized way to track and document important terms, concepts, and notes on a daily basis for SE Growth. The deliver term is from Monday - Friday(note: if you want to contribute at weekend is fine too).
 
 ## 📋 Overview
 
