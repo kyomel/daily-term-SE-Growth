@@ -44,3 +44,53 @@ Problem: At a party with 10 people, if everyone shakes hands with everyone else 
   - Answer: 45 handshakes
 
 ---
+
+day - 30
+
+## gRPC
+
+### definition:
+
+gRPC is a high-performance Remote Procedure Call (RPC) framework that can run in various environments and efficiently connect services in and across data centers.
+
+By default, gRPC employs Protocol Buffers to define message structures and RPC services.
+
+### example:
+
+There are four types of gRPC service methods:
+
+1. **Unary RPC**
+
+The client sends a request and receives a response from the server. Similar with REST API style.
+
+```proto
+rpc SayHello(HelloRequest) returns (HelloResponse);
+```
+
+2. **Server streaming RPC**
+
+The client sends a request and receives a stream of responses from the server. The client reads the responses until there are no responses.
+
+```proto
+rpc GetBooks(GetBooksRequest) returns (stream GetBooksResponse) {};
+```
+
+3. **Client streaming RPC**
+
+The client sends a stream of requests and receives a response from the server. When the client finished sending the requests, the server handle the requests and returns a responses.
+
+```proto
+rpc AddBatchBook(stream AddBatchBookRequest) returns (AddBatchBookResponse) {};
+```
+
+4. **Bidirectional streaming RPC**
+
+The client and the server send a sequence of messages using a read-write stream. The two streams operate independently in any order. For example, the server wait to receive all the client messages before returning the responses.
+
+```proto
+rpc BidiHello(stream HelloRequest) returns (stream HelloResponse);
+```
+
+This is the example of [gRPC implementation in Go](https://github.com/nadirbasalamah/books-grpc). This example covers the basic usages of gRPC.
+
+---
