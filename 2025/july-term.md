@@ -159,4 +159,7 @@ Enrollments Table:
 +------------+-----------+---------------+
 ```
 
+reference: [Link-1](https://www.geeksforgeeks.org/dbms/introduction-of-database-normalization/)
+[Link-2](https://www.datacamp.com/tutorial/normalization-in-sql)
+
 ---
