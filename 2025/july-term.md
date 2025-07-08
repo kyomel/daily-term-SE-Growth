@@ -223,6 +223,38 @@ reference: [Link-1](https://martinfowler.com/bliki/TestDrivenDevelopment.html)
 
 ---
 
+day - 7
+
+## Lazy Loading
+
+### Definition:
+
+Lazy Loading is a design pattern that delays the initialization or loading of resources until they are actually needed, rather than loading everything upfront. This improves performance by reducing initial load time and memory usage.
+
+**Benefits vs Trade-offs**
+
+- Benefits: Faster initial load, Lower memory usage, Better user experience
+- Trade-offs: Potential delay when accessing, More complex implementation, Possible loading indicators needed
+
+### Example:
+
+- Web Development - Image Lazy Loading
+
+```
+<!-- Images load only when they come into viewport -->
+<img src="placeholder.jpg" data-src="actual-image.jpg" loading="lazy" alt="Example">
+```
+
+- JavaScript - Module Lazy Loading
+
+```
+// Module is loaded only when function is called
+async function loadFeature() {
+    const module = await import('./heavy-feature.js');
+    return module.default();
+}
+```
+
 ---
 
 day - 8
@@ -248,5 +280,63 @@ These are the tool examples for Black Box Testing
 | Postman    | E2E API tool. Support other protocols like graphQL and gRPC                                                                    |
 | Playwright | E2E Web automation testing tool. Using JS / TS as a primary language                                                           |
 | Katalon    | E2E Multi-platform automation tool. Suitable for testing across different platforms like API, web and mobile. Free for 30 days |
+
+---
+
+## Eager Loading
+
+### Definition:
+
+Eager Loading is a technique where data or resources are loaded immediately when they are declared or referenced, rather than waiting until they are actually needed. This approach prioritizes upfront loading to ensure data is readily available when accessed.
+
+- **Eager Loading vs Lazy Loading**
+  |Aspect |Eager Loading |Lazy Loading |
+  |--- |--- |--- |
+  |Loading Time |Load immediately/upfront |Load when needed |
+  |Memory Usage |Higher initial memory consumption |Lower initial memory usage |
+  |Performance |Faster access after loading |Slower first access, faster subsequent |
+  |Network Requests |More upfront requests |Fewer initial requests |
+  |Use Case |Critical data needed immediately |Optional/conditional data |
+
+### Example:
+
+- Database Query
+
+```
+# Eager Loading Example - SQLAlchemy
+from sqlalchemy.orm import joinedload
+
+# Load user with all their posts immediately
+user = session.query(User)\
+    .options(joinedload(User.posts))\
+    .filter(User.id == 1)\
+    .first()
+
+# Posts are already loaded - no additional query needed
+print(user.posts)  # ✅ Data already available
+```
+
+- Javascript
+
+```
+// Eager Loading Example - JavaScript
+class ImageGallery {
+    constructor(imageUrls) {
+        this.images = [];
+        this.loadAllImages(imageUrls); // Load immediately
+    }
+
+    loadAllImages(urls) {
+        urls.forEach(url => {
+            const img = new Image();
+            img.src = url; // Load all images upfront
+            this.images.push(img);
+        });
+    }
+}
+
+// All images start loading immediately
+const gallery = new ImageGallery(['img1.jpg', 'img2.jpg', 'img3.jpg']);
+```
 
 ---
