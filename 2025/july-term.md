@@ -448,3 +448,38 @@ Balance: $800   | $800   | $800   | $800
 ```
 
 ---
+
+day - 11
+
+## Currying (Functional Programming Technique)
+
+### Definition:
+
+Currying is a technique where a function with multiple arguments is transformed into a sequence of functions, each taking a single argument.
+
+### Example:
+
+```
+def multiply(x):
+    def inner(y):
+        return x * y
+    return inner
+
+# Usage:
+mul_by_3 = multiply(3)
+result = mul_by_3(5)   # result is 15
+
+# Or, in one line:
+result = multiply(3)(5)  # result is 15
+
+```
+
+Explanation:
+
+```
+multiply(3)
+```
+
+returns a function that multiplies its argument by 3.
+
+---
