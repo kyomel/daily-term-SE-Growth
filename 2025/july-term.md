@@ -803,3 +803,45 @@ Result: Enhanced security and compliance control
 ```
 
 ---
+
+day - 23
+
+## Pessimistic Concurrency Control (PCC)
+
+### Definition:
+PCC is a database locking strategy that prevents conflicts by locking data while it's being read or modified, ensuring only one transaction can access it at a time.
+
+**Use Case**
+Banking systems use PCC to prevent two users from withdrawing the same money simultaneously.
+
+### Example:
+```
+-- Transaction A locks the row for update
+BEGIN;
+SELECT * FROM accounts WHERE id = 1 FOR UPDATE;
+-- No other transaction can read or update this row until A commits
+```
+
+---
+
+## Optimistic Concurrency Control (OCC)
+
+### Definition:
+OCC allows multiple transactions to proceed without locks, assuming conflicts are rare; it detects collisions only at commit-time using version tags.
+
+**Use Case**
+E-commerce carts: many users can edit simultaneously; only the first commit wins, others retry.
+
+### Example:
+JSON + HTTP
+```
+PUT /inventory/42
+If-Match: "v5"
+{
+  "stock": 12
+}
+```
+
+---
+
+
