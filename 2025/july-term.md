@@ -822,3 +822,24 @@ SELECT * FROM accounts WHERE id = 1 FOR UPDATE;
 -- No other transaction can read or update this row until A commits
 ```
 
+---
+
+## Optimistic Concurrency Control (OCC)
+
+### Definition:
+OCC allows multiple transactions to proceed without locks, assuming conflicts are rare; it detects collisions only at commit-time using version tags.
+
+**Use Case**
+E-commerce carts: many users can edit simultaneously; only the first commit wins, others retry.
+
+### Example:
+JSON + HTTP
+```
+PUT /inventory/42
+If-Match: "v5"
+{
+  "stock": 12
+}
+```
+
+
