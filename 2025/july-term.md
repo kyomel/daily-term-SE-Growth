@@ -1017,7 +1017,7 @@ function App() {
 
 day - 28
 
-## Logical Clocks(Disributed Systems)
+## Logical Clocks(Distributed Systems)
 
 ### Definition:
 
