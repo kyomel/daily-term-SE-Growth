@@ -489,6 +489,7 @@ day - 14
 ## Replica Technique in System Design
 
 ### Definition:
+
 Replica Technique is a design pattern used in distributed systems to enhance reliability, availability, and performance by creating multiple copies (replicas) of data or services across different nodes.
 
 Key Benefits
@@ -498,11 +499,13 @@ Key Benefits
 📈 Scalability - Load distribution across multiple replicas
 
 Types of Replication:
+
 - **Master-Slave Replication**: One master node handles writes, while multiple slave nodes handle reads. Use case: Read-heavy applications like web servers.
 - **Master-Master Replication**: Multiple nodes can handle both reads and writes. Use case: High write availability systems where any node can accept writes.
 - **Peer-to-Peer**: All nodes are equal, and each can read/write data. Use case: disributed systems like blockchain.
 
 ### Example:
+
 E-commerce Database Replication(scenario: Amazon-like online store)
 
 ```
@@ -518,6 +521,7 @@ E-commerce Database Replication(scenario: Amazon-like online store)
 ```
 
 Implementation Strategy
+
 - Master Database 🎯
 
 Handles all write operations (new orders, user registration)
@@ -529,9 +533,10 @@ Handle read queries (product searches, user profiles)
 Distributed globally for reduced latency
 
 - Replication Process 🔄
+
 ```
 -- Master receives write
-INSERT INTO orders (user_id, product_id, amount) 
+INSERT INTO orders (user_id, product_id, amount)
 VALUES (123, 456, 99.99);
 
 -- Changes replicated to slaves asynchronously
@@ -540,14 +545,16 @@ VALUES (123, 456, 99.99);
 
 ---
 
-day - 15 
+day - 15
 
 ## Functional Programming
 
 ### Definition:
+
 Functional Programming is a programming paradigm that treats computation as the evaluation of mathematical functions, emphasizing immutability, pure functions, and avoiding side effects.
 
 Key Principles:
+
 - Pure Functions - Same input always produces same output
 - Immutability - Data cannot be changed after creation
 - No Side Effects - Functions don't modify external state
@@ -556,6 +563,7 @@ Key Principles:
 Popular Functional Languages: Haskell, Lisp, Clojure, F#, Erlang, Scala
 
 ### Example:
+
 JavaScript - Pure vs Impure Function
 
 ```
@@ -599,9 +607,11 @@ day - 16
 ## Event Sourcing
 
 ### Definition:
+
 Event Sourcing is a software architectural pattern where state changes are stored as a sequence of events, rather than just the current state. Each event represents a change in the system, allowing for complete reconstruction of the application's state at any point in time.
 
 Key Concepts:
+
 - Events - Immutable, timestamped records of state changes
 - Event Store - Database for persisting events
 - Event Handlers - Process events to update application state
@@ -609,6 +619,7 @@ Key Concepts:
 - CQRS - Often used with Command Query Responsibility Segregation for separating read and write operations
 
 ### Example:
+
 Bank Account with Event Sourcing
 
 ```
@@ -641,6 +652,7 @@ day - 17
 ## Message Persistence
 
 ### Definition:
+
 Message Persistence is the ability to store messages durably so they survive system failures, restarts, or crashes. It ensures messages are not lost and can be retrieved and processed even after unexpected interruptions.
 
 Key Features:
@@ -651,6 +663,7 @@ Key Features:
 ✅ Clean Code: Well-documented and readable
 
 ### Example:
+
 RabbitMQ Persistent Queues
 
 ```
@@ -683,7 +696,7 @@ class MessageStore:
     def __init__(self):
         self.conn = sqlite3.connect('messages.db')
         self.create_table()
-    
+
     def create_table(self):
         self.conn.execute('''
             CREATE TABLE IF NOT EXISTS messages (
@@ -693,14 +706,14 @@ class MessageStore:
                 processed BOOLEAN DEFAULT FALSE
             )
         ''')
-    
+
     def store_message(self, content):
         self.conn.execute(
             'INSERT INTO messages (content, timestamp) VALUES (?, ?)',
             (content, datetime.now())
         )
         self.conn.commit()
-    
+
     def get_unprocessed_messages(self):
         cursor = self.conn.execute(
             'SELECT * FROM messages WHERE processed = FALSE'
@@ -715,16 +728,18 @@ day - 18
 ## Types of Failures in Distributed Systems
 
 ### Definition:
+
 Types of failures in distributed systems refer to the various ways components can malfunction or become unavailable, affecting the system's ability to provide consistent and reliable service across multiple nodes.
 
 Major Types of Failures:
+
 - Fail-stop: A node halts and remains halted permanently. Other nodes can detect that the node has failed (i.e., by communicating with it).
 - Crash: A node halts, but silently. So, other nodes may not be able to detect this state. They can only assume its failure when they are unable to communicate with it.
 - Omission: A node fails to respond to incoming requests.
 - Byzantine: A node exhibits arbitrary behavior: it may transmit arbitrary messages at arbitrary times, take incorrect steps, or stop.
-Byzantine failures occur when a node does not behave according to its specific protocol or algorithm. This usually happens when a malicious actor or a software bug compromises the node.
-To cope with these failures, we need complex solutions. However, most companies deploy distributed systems in environments that they assume to be private and secure.
-Fail-stop failures are the simplest and the most convenient ones from the perspective of someone that builds distributed systems. However, they are not very realistic. This is because there are many cases in real-life systems where it’s not easy for us to identify whether another node crashes or not.
+  Byzantine failures occur when a node does not behave according to its specific protocol or algorithm. This usually happens when a malicious actor or a software bug compromises the node.
+  To cope with these failures, we need complex solutions. However, most companies deploy distributed systems in environments that they assume to be private and secure.
+  Fail-stop failures are the simplest and the most convenient ones from the perspective of someone that builds distributed systems. However, they are not very realistic. This is because there are many cases in real-life systems where it’s not easy for us to identify whether another node crashes or not.
 
 ---
 
@@ -733,6 +748,7 @@ day - 21
 ## Batch Processing
 
 ### Definition:
+
 "A batch processing system takes a large amount of input data, runs a job to process it, and produces some output data.
 
 Designing Data-Intensive Applications, M Kleppmann"
@@ -745,6 +761,7 @@ Produces some output data: This means there is an outcome when the batch job fin
 One important aspect of batch processing is the execution of the job by using many processes, typically using a cluster of nodes.
 
 ### Example:
+
 - Payroll Processing System
 
 ```
@@ -771,17 +788,20 @@ day - 22
 ## Cloud Exit
 
 ### Definition:
+
 Cloud Exit is the strategic process of migrating applications, data, and IT infrastructure away from cloud services back to on-premises systems or alternative cloud providers to regain control, reduce costs, or address specific business requirements.
 
 Key Characteristics
-* Data Migration - Moving workloads out of cloud platforms
-* Cost Optimization - Reducing ongoing cloud expenses
-* Control Recovery - Regaining direct infrastructure management
-* Vendor Independence - Avoiding cloud provider lock-in
+
+- Data Migration - Moving workloads out of cloud platforms
+- Cost Optimization - Reducing ongoing cloud expenses
+- Control Recovery - Regaining direct infrastructure management
+- Vendor Independence - Avoiding cloud provider lock-in
 
 ### Example:
 
 - Basecamp(2022):
+
 ```
 Migration: AWS → On-premises
 Reason: Cost savings (~$7M over 5 years)
@@ -789,6 +809,7 @@ Result: Built own data centers, reduced operational costs
 ```
 
 - Spotify:
+
 ```
 Migration: Google Cloud → Multi-cloud + On-premises
 Reason: Better control over music streaming infrastructure
@@ -796,6 +817,7 @@ Result: Hybrid approach with custom data centers
 ```
 
 - Financial Institution Example:
+
 ```
 Migration: Public Cloud → Private Cloud
 Reason: Regulatory compliance and data sovereignty
@@ -809,12 +831,14 @@ day - 23
 ## Pessimistic Concurrency Control (PCC)
 
 ### Definition:
+
 PCC is a database locking strategy that prevents conflicts by locking data while it's being read or modified, ensuring only one transaction can access it at a time.
 
 **Use Case**
 Banking systems use PCC to prevent two users from withdrawing the same money simultaneously.
 
 ### Example:
+
 ```
 -- Transaction A locks the row for update
 BEGIN;
@@ -827,13 +851,16 @@ SELECT * FROM accounts WHERE id = 1 FOR UPDATE;
 ## Optimistic Concurrency Control (OCC)
 
 ### Definition:
+
 OCC allows multiple transactions to proceed without locks, assuming conflicts are rare; it detects collisions only at commit-time using version tags.
 
 **Use Case**
 E-commerce carts: many users can edit simultaneously; only the first commit wins, others retry.
 
 ### Example:
+
 JSON + HTTP
+
 ```
 PUT /inventory/42
 If-Match: "v5"
@@ -849,14 +876,16 @@ day - 24
 ## Paxos Algorithm
 
 ### Definition:
-Paxos is a consensus algorithm used in distributed systems to achieve agreement among multiple nodes on a single value, even when some nodes fail or network partitions occur. It guarantees safety (correctness) but not liveness (progress) under all conditions.
 
+Paxos is a consensus algorithm used in distributed systems to achieve agreement among multiple nodes on a single value, even when some nodes fail or network partitions occur. It guarantees safety (correctness) but not liveness (progress) under all conditions.
 
 Key Characteristics
 ✅ Fault-tolerant: Works with up to
+
 ```
 (n-1)/2
 ```
+
 node failures
 ✅ Safety guaranteed: Never produces incorrect results
 ⚠️ Liveness not guaranteed: May not always make progress
@@ -868,32 +897,37 @@ The Paxos algorithm defines three different roles:
 - Proposers
 - Acceptors
 - Learners
-Every node in the system can potentially play multiple roles.
+  Every node in the system can potentially play multiple roles.
 
 ### Example:
+
 Distributed Database Leader Election
 
 Scenario: 5 database replicas need to elect a leader
+
 ```
 Nodes: A, B, C, D, E
 Goal: Elect one leader from candidates A, B, C
 ```
 
 Phase 1 (Proposers):
+
 ```
 Node A (Proposer): "Prepare request #1, I want to propose myself as leader"
 → Sends to nodes B, C, D, E
 ```
 
 Phase 2 (Acceptors):
+
 ```
 Node B: "Promise #1, I haven't seen higher proposals"
-Node C: "Promise #1, I haven't seen higher proposals"  
+Node C: "Promise #1, I haven't seen higher proposals"
 Node D: "Promise #1, I haven't seen higher proposals"
 Node E: "Promise #1, but I previously accepted Node B as leader"
 ```
 
 Phase 3 (Learners):
+
 ```
 Node A: "Accept Node B as leader" (uses highest previous value from promises)
 → Majority (B, C, D) accept
@@ -907,6 +941,7 @@ day - 25
 ## Internationalization (i18n) Frontend
 
 ### Definition:
+
 Internationalization (i18n) is the process of designing and developing frontend applications to support multiple languages, regions, and cultures without requiring code changes. It enables applications to adapt to different locales by externalizing text, formatting dates/numbers, and handling cultural preferences.
 
 Key Features
@@ -917,7 +952,9 @@ Key Features
 🎨 Cultural Adaptation - Colors, images, layouts
 
 ### Example:
+
 - React with react-i18next
+
 ```
 // i18n.js - Configuration
 import i18n from 'i18next';
@@ -955,7 +992,7 @@ import { useTranslation } from 'react-i18next';
 
 function App() {
   const { t, i18n } = useTranslation();
-  
+
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
   };
@@ -965,7 +1002,7 @@ function App() {
       <h1>{t('welcome')}</h1>
       <button>{t('login')}</button>
       <p>{t('users_count', { count: 5 })}</p>
-      
+
       <select onChange={(e) => changeLanguage(e.target.value)}>
         <option value="en">English</option>
         <option value="es">Español</option>
@@ -978,4 +1015,42 @@ function App() {
 
 ---
 
+day - 28
 
+## Logical Clocks(Disributed Systems)
+
+### Definition:
+
+Logical Clocks are mechanisms used in distributed systems to establish a partial ordering of events across different nodes without relying on synchronized physical clocks. They assign timestamps to events to determine causality relationships between operations happening on different machines.
+
+### Example:
+
+- Scenario: Three nodes (A, B, C) exchanging messages
+
+```
+Node A: [1] Send msg to B → [2] Receive from C → [4] Internal event
+Node B: [3] Receive from A → [4] Send msg to C → [5] Internal event
+Node C: [2] Send msg to A → [5] Receive from B → [6] Internal event
+```
+
+Lamport Clock Rules:
+
+- Internal Events:
+
+```
+LC = LC + 1
+```
+
+- Send Message:
+
+```
+LC = LC + 1
+```
+
+- Receive Message:
+
+```
+LC = max(LC, received_timestamp) + 1
+```
+
+---
