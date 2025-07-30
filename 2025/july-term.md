@@ -1108,3 +1108,61 @@ Real-World Example: E-Commerce Application
 | 💾 Data | PostgreSQL | Store products, users, orders |
 
 ---
+
+day - 30
+
+## Big-O Notation
+
+### Definition:
+
+Big-O notation describes the upper bound of an algorithm's time or space complexity as input size grows. It expresses the worst-case scenario performance, helping developers compare algorithm efficiency.
+
+### Example:
+
+- Common Big-O Examples
+  | Notation | Name | Description | Example Algorithm |
+  | --- | --- | --- | --- |
+  | O(1) | Constant | Same time regardless of input size | Array access by index |
+  | O(log n) | Logarithmic | Time increases slowly | Binary search |
+  | O(n) | Linear | Time grows proportionally | Linear search |
+  | O(n log n) | Log-linear | Efficient sorting algorithms | Merge sort, Quick sort |
+  | O(n²) | Quadratic | Time grows exponentially | Bubble sort, nested loops |
+  | O(2ⁿ) | Exponential | Extremely slow growth | Recursive Fibonacci |
+
+---
+
+## Vertical Sharding Database
+
+### Definition:
+
+Vertical Sharding is a database partitioning technique where columns of a table are split across multiple databases or servers, rather than splitting rows. Each shard contains a subset of columns from the original table, typically grouping related columns together based on access patterns or data characteristics.
+
+**Key Characteristics**
+✅ Column-based partitioning
+✅ Reduces table width
+✅ Improves query performance for specific column groups
+✅ Enables specialized storage optimization
+
+### Example:
+
+- E-commerce User Database
+
+```
+users_table:
+- user_id (Primary Key)
+- username, email, password_hash
+- first_name, last_name, phone, address
+- profile_image, bio, preferences
+- last_login, created_at, updated_at
+- account_balance, subscription_plan
+```
+
+After Vertical Sharding
+| Shard | Database | Columns | Use Case |
+| --- | --- | --- | --- |
+| Authentication | `auth_db` | `user_id`, `username`, `email`, `password_hash` | Login/Security |
+| Profile | `profile_db` | `user_id`, `first_name`, `last_name`, `phone`, `address` | User Management |
+| Content | `content_db` | `user_id`, `profile_image`, `bio`, `preferences` | Social Features |
+| Billing | `billing_db` | `user_id`, `account_balance`, `subscription_plan` | Payment Processing |
+
+---
