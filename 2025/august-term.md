@@ -60,3 +60,37 @@ public class Customer {
 ```
 
 ---
+
+day - 2
+
+## Space Complexity
+
+### Definition:
+
+Space complexity is the amount of memory an algorithm needs to run as a function of the size of its input.
+
+### Example:
+
+If an algorithm uses a fixed amount of memory regardless of input size, it has O(1) space complexity.
+If extra space grows with input, for example, storing an array of size n, it has O(n) space complexity.
+
+Summary:
+Space complexity measures an algorithm’s memory usage as input size increases.
+
+---
+
+## Time Complexity
+
+### Definition:
+
+Time complexity measures how the running time of an algorithm increases as the size of the input grows.
+
+### Example:
+
+If an algorithm examines every element in a list of size n, , its time complexity is O(n).
+If it uses nested loops through the list, its time complexity is O(n²).
+
+Summary:
+Time complexity describes how the execution time of an algorithm grows with input size.
+
+---
