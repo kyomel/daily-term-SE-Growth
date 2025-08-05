@@ -94,3 +94,111 @@ Summary:
 Time complexity describes how the execution time of an algorithm grows with input size.
 
 ---
+
+day - 5
+
+## The 3 Vs(Data Engineering)
+
+### Definition:
+
+The 3 Vs are the fundamental characteristics that define Big Data challenges in data engineering:
+
+- Volume - The amount/size of data
+- Velocity - The speed of data generation and processing
+- Variety - The different types and formats of data
+
+### Example:
+
+- Volume
+
+```
+• Netflix: 15+ billion hours of content watched monthly
+• Facebook: 4+ petabytes of data generated daily
+• Walmart: 2.5 petabytes of customer transaction data per hour
+```
+
+- Velocity
+
+```
+•• Twitter: 500+ million tweets per day (real-time processing)
+• Stock Trading: Millions of transactions per second
+• IoT Sensors: Continuous data streams from smart devices
+```
+
+- Variety
+
+```
+• Structured: SQL databases, CSV files
+• Semi-structured: JSON, XML, logs
+• Unstructured: Images, videos, emails, social media posts
+```
+
+Real-World Scenario
+E-commerce Platform (Amazon):
+
+- Volume: Billions of product searches and purchases
+- Velocity: Real-time recommendation updates during browsing
+- Variety: User profiles, product catalogs, reviews, images, clickstreams
+
+---
+
+## The REDCAMEL Approach for Designing APIs
+
+### Definition:
+
+REDCAMEL is an approach for designing APIs and services, consisting of these steps:
+
+RE: Requirements — Identify functional and non-functional requirements.
+DC: Design Considerations — Make architectural and technology decisions.
+AM: API Model — Define the API structure and data formats.
+E: Evaluating Non-functional Requirements — Assess performance, scalability, security, etc.
+L: Latency Budget — Allocate acceptable response times for the system.
+This structured approach helps systematically design APIs aligned with service needs.
+
+Breakdown of REDCAMEL:
+RE (Requirements): Gather and analyze both functional (what the system should do) and non-functional requirements (performance, scalability, security). This step sets the foundation for all design decisions.
+
+DC (Design Considerations): Based on requirements, decide on architectural styles (e.g., REST, gRPC), data formats (JSON, Protobuf), protocols, and their versions to best meet the needs.
+
+AM (API Model): Define the API endpoints, request/response structures, data schemas, and interaction patterns that the service will expose.
+
+E (Evaluating Non-functional Requirements): Evaluate how well the design meets criteria like latency, throughput, fault tolerance, and security to ensure quality.
+
+L (Latency Budget): Allocate time limits for each component or operation in the system to meet overall latency goals, ensuring responsiveness.
+
+This approach ensures a comprehensive and systematic design of APIs tailored to service requirements.
+
+### Example:
+
+```
+# E-commerce API following REDCAMEL principles
+
+# Base URL with versioning
+https://api.ecommerce.com/v1
+
+# Endpoints
+GET    /users                    # List users (paginated)
+POST   /users                    # Create user
+GET    /users/{id}               # Get user details
+PUT    /users/{id}               # Update user
+DELETE /users/{id}               # Delete user
+GET    /users/{id}/orders        # Get user's orders
+POST   /users/{id}/orders        # Create order for user
+
+# Response format
+{
+  "data": { /* actual data */ },
+  "meta": {
+    "timestamp": "2025-08-05T14:23:44Z",
+    "version": "1.0.0",
+    "request_id": "req_123456"
+  },
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 100
+  }
+}
+```
+
+---
