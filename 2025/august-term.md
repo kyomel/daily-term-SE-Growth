@@ -202,3 +202,27 @@ POST   /users/{id}/orders        # Create order for user
 ```
 
 ---
+
+day - 6
+
+## Event-Based Concurrency
+
+### Definition:
+
+Event-Based Concurrency is a programming model where tasks run concurrently by reacting to events (such as user actions, messages, or I/O), allowing efficient management of multiple tasks without multiple threads.
+
+### Example:
+
+Node.js HTTP Server (Non-blocking, Event-Based):
+
+```
+const http = require("http");
+
+http.createServer((req, res) => {
+  res.end("Hello, Event-Based Concurrency!");
+}).listen(3000);
+
+console.log("Server running on port 3000");
+```
+
+---
