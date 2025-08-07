@@ -226,3 +226,48 @@ console.log("Server running on port 3000");
 ```
 
 ---
+
+day - 7
+
+## TLB Basic Algorithm
+
+### Definition:
+
+The TLB (Translation Lookaside Buffer) Basic Algorithm handles virtual-to-physical memory address translation by first checking the TLB (a fast, small cache). If the page number is found (TLB hit), the frame number is retrieved quickly; if not (TLB miss), the address is resolved via page tables, and the translation is then updated in the TLB for future accesses.
+
+### Example:
+
+```
+On memory access (virtual address VA):
+    If page_number(VA) in TLB:
+        // TLB Hit
+        Use TLB to get frame_number -> physical address (fast)
+    Else:
+        // TLB Miss
+        Look up page_number(VA) in page table
+        Update TLB with the new mapping
+        Use mapping to get frame_number -> physical address
+```
+
+- step 1: Check if page number is in TLB
+- step 2: If hit: use TLB mapping (fast)
+- step 3: If miss: consult page table, update TLB, retry
+
+---
+
+## Linus Torvald
+
+### Profile:
+
+Linus Torvalds is a software engineer from Finland best known as the creator of the Linux kernel. He was born on December 28, 1969, in Helsinki, Finland. Linus began developing the Linux kernel in 1991 as a personal project while he was a student at the University of Helsinki. His project eventually grew into a widely used open-source operating system, found on servers, mobile devices (such as Android), and supercomputers around the world.
+
+Besides Linux, Torvalds is also known for developing Git, a version control system that has become the industry standard for software development.
+
+Summary:
+
+Name: Linus Benedict Torvalds
+Born: December 28, 1969, Helsinki, Finland
+Main Contributions: Creator of the Linux kernel, developer of Git
+Impact: Open source community, global computer technology development
+
+---
