@@ -238,20 +238,27 @@ The TLB (Translation Lookaside Buffer) Basic Algorithm handles virtual-to-physic
 ### Example:
 
 ```
-On memory access (virtual address VA):
-    If page_number(VA) in TLB:
-        // TLB Hit
-        Use TLB to get frame_number -> physical address (fast)
-    Else:
-        // TLB Miss
-        Look up page_number(VA) in page table
-        Update TLB with the new mapping
-        Use mapping to get frame_number -> physical address
+VPN = (VirtualAddress & VPN_MASK) >> SHIFT
+(Success, TlbEntry) = TLB_Lookup(VPN)
+if (Success == True)   // TLB Hit
+    if (CanAccess(TlbEntry.ProtectBits) == True)
+        Offset   = VirtualAddress & OFFSET_MASK
+        PhysAddr = (TlbEntry.PFN << SHIFT) | Offset
+        Register = AccessMemory(PhysAddr)
+    else
+        RaiseException(PROTECTION_FAULT)
+else                  // TLB Miss
+    PTEAddr = PTBR + (VPN * sizeof(PTE))
+    PTE = AccessMemory(PTEAddr)
+    if (PTE.Valid == False)
+        RaiseException(SEGMENTATION_FAULT)
+    else if (CanAccess(PTE.ProtectBits) == False)
+        RaiseException(PROTECTION_FAULT)
+    else
+        TLB_Insert(VPN, PTE.PFN, PTE.ProtectBits)
+        RetryInstruction()
 ```
-
-- step 1: Check if page number is in TLB
-- step 2: If hit: use TLB mapping (fast)
-- step 3: If miss: consult page table, update TLB, retry
+The algorithm the hardware follows works like this: first, extract the virtual page number (VPN) from the virtual address (Line 1 in the code snippet above), and check if the TLB holds the translation for this VPN (Line 2). If it does, we have a TLB hit, which means the TLB holds the translation. Success! We can now extract the page frame number (PFN) from the relevant TLB entry, concatenate that onto the offset from the original virtual address, and form the desired physical address (PA), and access memory (Lines 5–7), assuming protection checks do not fail (Line 4).
 
 ---
 
