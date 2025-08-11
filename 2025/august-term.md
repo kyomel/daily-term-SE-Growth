@@ -258,6 +258,7 @@ else                  // TLB Miss
         TLB_Insert(VPN, PTE.PFN, PTE.ProtectBits)
         RetryInstruction()
 ```
+
 The algorithm the hardware follows works like this: first, extract the virtual page number (VPN) from the virtual address (Line 1 in the code snippet above), and check if the TLB holds the translation for this VPN (Line 2). If it does, we have a TLB hit, which means the TLB holds the translation. Success! We can now extract the page frame number (PFN) from the relevant TLB entry, concatenate that onto the offset from the original virtual address, and form the desired physical address (PA), and access memory (Lines 5–7), assuming protection checks do not fail (Line 4).
 
 ---
@@ -333,6 +334,31 @@ Service Design Patterns:
 - Container orchestration patterns
 - Service mesh architecture
 - Observability patterns
+```
+
+---
+
+day - 11
+
+## Variable Shadowing
+
+### Definition:
+
+Variable shadowing is a technique in which a variable declared within a certain scope has the same name as a variable declared in an outer scope. This is also known as masking. This outer variable is said to be shadowed by the inner variable, while the inner variable is said to mask the outer variable.
+
+### Example:
+
+```rust
+fn main() {
+  let outer_variable = 112;
+  { // start of code block
+        let inner_variable = 213;
+        println!("block variable: {}", inner_variable);
+        let outer_variable = 117;
+        println!("block variable outer: {}", outer_variable);
+  } // end of code block
+    println!("outer variable: {}", outer_variable);
+}
 ```
 
 ---
