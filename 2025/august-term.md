@@ -474,3 +474,69 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 If you’d like, I can also make you a short pros & cons table so you see when to use and avoid this strategy.
 
 ---
+
+day - 14
+
+## Monotonically Increasing
+
+### Definition:
+
+A sequence or function is monotonically increasing if it never decreases
+as you move from left to right (or from one term to the next).
+In other words, each value is greater than or equal to the previous value.
+
+Mathematically, for a sequence $a_1, a_2, a_3, \ldots, a_n$,
+it's monotonically increasing if $a_1 \le a_2 \le a_3 \le \ldots \le a_n$.
+
+### Example:
+
+Your daily step count over a week:
+
+- Monday: 5,000 steps
+- Tuesday: 5,000 steps
+- Wednesday: 6,200 steps
+- Thursday: 6,200 steps
+- Friday: 7,800 steps
+- Saturday: 8,500 steps
+- Sunday: 8,500 steps
+
+This sequence is monotonically increasing because each day's count is $\ge$ the previous day's count.
+
+---
+
+## Twitter Snowflake
+
+### Definition:
+
+A Twitter Snowflake is a unique 64-bit ID system used by Twitter (now X) to generate billions of unique identifiers for tweets, users, and other objects. It's called "Snowflake" because like real snowflakes, each ID is guaranteed to be unique.
+
+**How It Works:**
+
+The 64-bit ID is split into parts:
+
+- Timestamp (41 bits): When it was created
+- Machine ID (10 bits): Which server generated it
+- Sequence (12 bits): Counter for IDs created in the same millisecond
+
+### Example:
+
+A Twitter Snowflake ID might look like: 1234567890123456789
+
+When you see a tweet URL like:
+
+```
+https://twitter.com/user/status/1234567890123456789
+```
+
+That long number (1234567890123456789) is the Snowflake ID for that specific tweet.
+
+**Why It's Useful**
+
+- Roughly sortable by time: Newer tweets have higher IDs
+- Globally unique: No two tweets will ever have the same ID
+- High performance: Can generate millions of IDs per second across multiple servers
+
+**Real-World Impact**
+This system allows Twitter to handle billions of tweets while ensuring every single one has a unique identifier, making it possible to link, share, and reference any tweet ever posted!
+
+---
