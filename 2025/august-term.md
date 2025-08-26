@@ -921,3 +921,33 @@ class EditorHistory {
 [Link-2](https://www.geeksforgeeks.org/memento-design-pattern/)
 
 ---
+
+day - 26
+
+## Bloom Filters
+
+### Definition:
+
+Bloom Filter is a space-efficient probabilistic data structure that tells you if an element is "definitely not in a set" or "possibly in a set." It can have false positives (says yes when it should say no) but never false negatives (if it says no, the item is definitely not there).
+
+**Key Features**
+
+- Space efficient: Uses much less memory than storing actual data
+- Fast lookups: Constant time O(1) operations
+- Probabilistic: Can give false positives, but never false negatives
+- No deletions: Can't remove items once added
+
+### Example:
+
+- Google Chrome
+
+```
+User visits: badsite.com
+↓
+Check Bloom Filter locally (instant)
+↓
+Filter says "NO" → Safe to visit ✓
+Filter says "YES" → Contact Google servers to double-check
+```
+
+---
