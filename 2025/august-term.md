@@ -951,3 +951,32 @@ Filter says "YES" → Contact Google servers to double-check
 ```
 
 ---
+
+day - 27
+
+## HSTS (HTTP Strict Transport Security)
+
+### Definition:
+
+HSTS (HTTP Strict Transport Security) is a web security mechanism that forces browsers to only communicate with a website over secure HTTPS connections. Once enabled, it prevents users from accidentally visiting the insecure HTTP version of a site, even if they type "http://" in the address bar.
+
+**Key Features**
+
+- Forces HTTPS: Automatically redirects HTTP to HTTPS
+- Prevents downgrade attacks: Stops attackers from forcing HTTP connections
+- Browser enforcement: Works at the browser level
+- Time-based: Policy expires after a specified period
+
+### Example:
+
+- Online Banking Website
+
+```
+User types: http://mybank.com
+↓
+Browser automatically converts to: https://mybank.com
+↓
+Secure HTTPS connection established ✓
+```
+
+---
