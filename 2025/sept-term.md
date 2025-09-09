@@ -291,3 +291,132 @@ Path A  Path B  Path C  (All equal cost)
 ```
 
 ---
+
+Day - 5
+
+## Foreign Data Wrapper(FDW)
+
+### Definition:
+
+Foreign Data Wrappers (FDW) is a PostgreSQL feature that allows you to access and query data from external sources (other databases, files, APIs, web services) as if they were regular tables in your local database. It creates a "virtual window" to remote data without actually storing it locally, enabling seamless integration across different data systems.
+
+**Key Features**
+
+- Transparent access: Query external data using standard SQL
+- Real-time data: Always fetches current data from source
+- No data duplication: Data stays in original location
+- Cross-database joins: Combine local and remote data
+- Multiple sources: Connect to various database types and services
+
+### Example:
+
+- E-commerce company with data in multiple systems
+
+```
+-- Connect to different data sources
+
+-- 1. Sales data in MySQL
+CREATE FOREIGN TABLE mysql_sales (
+    sale_id INTEGER,
+    product_id INTEGER,
+    amount DECIMAL(10,2),
+    sale_date DATE
+) SERVER mysql_server OPTIONS (table_name 'sales');
+
+-- 2. Product data in MongoDB
+CREATE FOREIGN TABLE mongo_products (
+    product_id INTEGER,
+    product_name TEXT,
+    category TEXT,
+    price DECIMAL(10,2)
+) SERVER mongo_server OPTIONS (collection 'products');
+
+-- 3. Customer data in CSV files
+CREATE FOREIGN TABLE csv_customers (
+    customer_id INTEGER,
+    name TEXT,
+    region TEXT,
+    signup_date DATE
+) SERVER file_server OPTIONS (
+    filename '/data/customers.csv',
+    format 'csv',
+    header 'true'
+);
+
+-- 4. Web analytics from REST API
+CREATE FOREIGN TABLE api_pageviews (
+    page_url TEXT,
+    views INTEGER,
+    date DATE
+) SERVER api_server OPTIONS (
+    endpoint 'https://analytics.company.com/api/pageviews'
+);
+```
+
+- Cross-System Analytics Query
+
+```
+-- Generate comprehensive sales report combining all sources
+SELECT
+    mp.category,
+    mp.product_name,
+    cc.region,
+    SUM(ms.amount) as total_sales,
+    COUNT(ms.sale_id) as num_transactions,
+    AVG(apv.views) as avg_page_views
+FROM mysql_sales ms
+JOIN mongo_products mp ON ms.product_id = mp.product_id
+JOIN csv_customers cc ON ms.customer_id = cc.customer_id
+LEFT JOIN api_pageviews apv ON apv.page_url LIKE '%' || mp.product_name || '%'
+WHERE ms.sale_date >= '2024-01-01'
+GROUP BY mp.category, mp.product_name, cc.region
+ORDER BY total_sales DESC;
+```
+
+---
+
+Day - 8
+
+## Broken Pattern
+
+### Definition:
+
+The broker pattern, also known as the intermediary pattern, inserts a middleman called a broker between service users (also known as clients) and service providers (servers). The client is fully disconnected from the servers and has no knowledge of them. When a client requires a service, it asks a broker over a service interface, and the broker forwards the request to the appropriate server, which handles the request. The server returns the outcome of its action to the broker that forwards the result (together with any exceptions) to the client that initiated the request.
+
+### Example:
+
+- Broken Singleton Pattern
+
+```
+// BROKEN: Not thread-safe, can create multiple instances
+public class DatabaseConnection {
+    private static DatabaseConnection instance;
+    private Connection connection;
+
+    private DatabaseConnection() {
+        // Expensive database connection setup
+        this.connection = DriverManager.getConnection("jdbc:mysql://localhost/db");
+    }
+
+    // PROBLEM: Two threads can both see instance as null
+    public static DatabaseConnection getInstance() {
+        if (instance == null) {
+            instance = new DatabaseConnection();  // Race condition!
+        }
+        return instance;
+    }
+
+    public void executeQuery(String sql) {
+        // PROBLEM: Single connection shared by all threads
+        Statement stmt = connection.createStatement();
+        stmt.execute(sql);  // Concurrent access issues!
+    }
+}
+
+// Usage that breaks:
+// Thread 1: DatabaseConnection.getInstance()
+// Thread 2: DatabaseConnection.getInstance() (simultaneously)
+// Result: Two instances created, defeating Singleton purpose
+```
+
+---
