@@ -489,3 +489,27 @@ Reactive Scaling is an automatic system behavior where computing resources (serv
 - Back to 150 servers (slightly higher baseline for weekend)
 
 ---
+
+day - 11
+
+## Sociotechnical Design in Software Development
+
+### Definition:
+
+Sociotechnical Design is an approach to software development that considers both technical systems and human/social factors as equally important and interconnected. It recognizes that successful software solutions must account for how people work, communicate, collaborate, and organize themselves, not just the technical architecture. The goal is to design systems that fit naturally into human workflows and social structures.
+
+**Key Principles**
+
+- Human-centered: Design around how people actually work
+- Social context: Consider team dynamics, culture, and communication patterns
+- Technical-social alignment: Technology should support, not hinder, social interactions
+- Organizational fit: Systems should match organizational structure and processes
+- Continuous adaptation: Design evolves with changing social and technical needs
+
+### Example:
+
+```
+Like designing a kitchen - you don't just consider the technical specs of appliances (technical design), but also how the family cooks together, their eating habits, cultural food preferences, who does the cleaning, and how they move around the space (sociotechnical design). A perfectly efficient kitchen layout that ignores how the family actually lives and works together will be frustrating and unused!
+```
+
+---
