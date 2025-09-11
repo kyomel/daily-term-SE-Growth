@@ -512,4 +512,7 @@ Sociotechnical Design is an approach to software development that considers both
 Like designing a kitchen - you don't just consider the technical specs of appliances (technical design), but also how the family cooks together, their eating habits, cultural food preferences, who does the cleaning, and how they move around the space (sociotechnical design). A perfectly efficient kitchen layout that ignores how the family actually lives and works together will be frustrating and unused!
 ```
 
+[link-1](https://www.infoq.com/news/2025/09/sociotechnical-design/?utm_campaign=infoq_content&utm_source=infoq&utm_medium=feed&utm_term=global)
+[link-2](https://www.infoq.com/news/2025/05/sociotechnical-complexity/)
+
 ---
