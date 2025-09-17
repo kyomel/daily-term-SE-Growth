@@ -612,3 +612,28 @@ Start small and grow gradually, rather than building something complex from the 
 - Key: Small, working components that could be combined
 
 ---
+
+## Database-as-a-Service (DBaaS)
+
+### Definition:
+Database-as-a-Service (DBaaS) is a cloud-based service model where a third-party provider hosts, manages, and maintains database infrastructure, allowing users to access and use databases without handling the underlying hardware, software, or administration tasks.
+
+In simple terms:
+Instead of building and maintaining your own database server (like owning a house), you rent database services from a provider (like staying in a hotel).
+
+**How It Works**
+```
+graph LR
+    A[Your Application] --> B[Internet] --> C[DBaaS Provider] --> D[Managed Database]
+    E[Automatic Backups] --> C
+    F[Security Updates] --> C
+    G[Scaling] --> C
+```
+
+### Example:
+Amazon RDS
+- What: Managed relational databases (MySQL, PostgreSQL, etc.)
+- You get: Database without server management
+- Provider handles: Backups, updates, scaling, security
+
+---
