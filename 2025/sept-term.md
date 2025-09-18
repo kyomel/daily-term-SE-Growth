@@ -612,3 +612,62 @@ Start small and grow gradually, rather than building something complex from the 
 - Key: Small, working components that could be combined
 
 ---
+
+day - 17
+
+## Database-as-a-Service (DBaaS)
+
+### Definition:
+Database-as-a-Service (DBaaS) is a cloud-based service model where a third-party provider hosts, manages, and maintains database infrastructure, allowing users to access and use databases without handling the underlying hardware, software, or administration tasks.
+
+In simple terms:
+Instead of building and maintaining your own database server (like owning a house), you rent database services from a provider (like staying in a hotel).
+
+**How It Works**
+```
+graph LR
+    A[Your Application] --> B[Internet] --> C[DBaaS Provider] --> D[Managed Database]
+    E[Automatic Backups] --> C
+    F[Security Updates] --> C
+    G[Scaling] --> C
+```
+
+### Example:
+Amazon RDS
+- What: Managed relational databases (MySQL, PostgreSQL, etc.)
+- You get: Database without server management
+- Provider handles: Backups, updates, scaling, security
+
+---
+
+day - 18
+
+## Sidecar Pattern
+
+### Definition:
+The Sidecar Pattern is a software architecture design where additional functionality is attached to an application by deploying it in a separate but closely connected container or process, similar to how a motorcycle sidecar attaches to provide extra capability without modifying the main vehicle.
+
+In simple terms: Enhanced functionality
+Add features to your app without changing the main code by running helper services alongside it.
+
+**How It Works**
+- Main container: Your actual application
+- Sidecar container: Helper services (logging, monitoring, etc.)
+- Shared resources: Network, storage volumes
+- Separate concerns: Each container has one responsibility
+
+### Example:
+E-commerce Website with Security Sidecar
+```
+┌─────────────────┐    ┌──────────────────┐
+│  Shopping App   │    │ Security Sidecar │
+│ ┌─────────────┐ │    │ ┌──────────────┐ │
+│ │• Orders     │ │◄──►│ │• SSL/TLS     │ │
+│ │• Inventory  │ │    │ │• Auth tokens │ │
+│ │• Products   │ │    │ │• Rate limits │ │
+│ └─────────────┘ │    │ │• Logging     │ │
+└─────────────────┘    │ └──────────────┘ │
+                       └──────────────────┘
+```
+
+---
