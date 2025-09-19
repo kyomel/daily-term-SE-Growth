@@ -671,3 +671,42 @@ E-commerce Website with Security Sidecar
 ```
 
 ---
+
+day - 19
+
+## Recreate Deployment
+
+### Definition:
+Recreate Deployment is a deployment strategy where the old version of an application is completely shut down before the new version is deployed. This creates a brief period of downtime during the transition, but ensures that only one version of the application runs at any given time.
+
+**How It Works**
+- Stop the current version (all instances go down)
+- Deploy the new version
+- Start the new version
+- Brief downtime occurs between steps 1 and 3
+
+### Example:
+E-commerce Website Update
+Before Deployment:
+```
+🟢 Website v1.0 (Running)
+- 3 servers handling customer traffic
+- Users can browse and purchase products
+```
+
+During Recreate Deployment:
+```
+🔴 All servers stopped
+- Website completely offline
+- Users see "Site temporarily unavailable"
+- Duration: 5-15 minutes typically
+```
+
+After Deployment:
+```
+🟢 Website v2.0 (Running)
+- 3 new servers with updated version
+- Users can access the new features
+```
+
+---
