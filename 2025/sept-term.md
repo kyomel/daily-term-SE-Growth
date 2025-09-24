@@ -798,3 +798,29 @@ Employee wants to access Gmail admin panel:
 ```
 
 ---
+
+day - 24
+
+## Read-Replica Pattern
+
+### Definition:
+he Read-Replica Pattern is a database architecture where you have one primary (master) database that handles all writes, and multiple read-only copies (replicas) that handle read queries. This separates read and write operations to improve performance and scalability.
+
+**How It Works**
+Primary database: Handles all INSERT, UPDATE, DELETE operations
+Read replicas: Handle all SELECT queries
+Data synchronization: Changes flow from primary to replicas
+Load distribution: Spread read traffic across multiple replicas
+
+### Example:
+E-commerce Website
+```
+👥 Users writing reviews/orders ──► 📊 Primary DB (Writes only)
+                                      │
+                                      ├── Sync ──► 📖 Read Replica 1
+                                      ├── Sync ──► 📖 Read Replica 2  
+                                      └── Sync ──► 📖 Read Replica 3
+                                                    ▲
+👥 Users browsing products ──────────────────────┘
+   (Product listings, search, reviews)
+```
