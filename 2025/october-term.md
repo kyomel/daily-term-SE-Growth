@@ -29,3 +29,41 @@ Benefits:
 ```
 
 ---
+
+day - 2
+
+### Chubby
+
+### Definition:
+Chubby is a distributed lock service developed by Google that provides coarse-grained locking and reliable small-file storage for loosely-coupled distributed systems. It's designed to help coordinate activities across thousands of machines in a cluster, primarily for leader election, configuration storage, and naming services.
+
+**Key Properties:**
+- Coarse-grained locking: Held for hours/days, not seconds
+- High availability: Designed for 99.95% uptime
+- Small file storage: Acts like a simple file system for config data
+- Advisory locks: Applications cooperate voluntarily
+- Paxos-based: Uses Paxos consensus algorithm for consistency
+
+**Architecture:**
+- Chubby cell: Typically 5 replicas (servers)
+- Master replica: One elected leader handles all requests
+- Client library: Applications use simple API
+- Lock delay: Prevents split-brain scenarios
+
+### Example:
+Web service with multiple servers needs to elect a leader for background tasks
+```
+Initial state:
+┌─────────────────────────────────┐
+│         Chubby Cell             │
+│  [Replica1] [Replica2*]         │  * = Master
+│  [Replica3] [Replica4]          │
+│  [Replica5]                     │
+└─────────────────────────────────┘
+
+Application Servers:
+[WebServer1] [WebServer2] [WebServer3]
+```
+
+---
+
