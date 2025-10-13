@@ -318,3 +318,184 @@ Original-Content-Length: 1247
 ```
 
 ---
+
+day - 10
+
+## Speculative Decoding
+
+### Definition:
+Speculative Decoding is an optimization technique for large language models (LLMs) that speeds up text generation by using a smaller, faster "draft" model to predict multiple tokens ahead, then having the larger "target" model verify and accept/reject these predictions in parallel. This reduces the number of sequential forward passes needed.
+
+**Key Properties:**
+- Two-model approach: Small draft model + large target model
+- Parallel verification: Target model checks multiple tokens at once
+- Mathematically equivalent: Same output distribution as normal decoding
+- Speed improvement: 2-4x faster generation without quality loss
+- Speculative execution: Generate candidates optimistically
+
+**How It Works:**
+1. Draft model quickly generates multiple token candidates
+2. Target model evaluates all candidates in parallel
+3. Accept/reject tokens based on probability comparison
+4. Continue from longest accepted sequence
+5. Repeat until completion
+
+### Example:
+ChatBot Response:
+```
+class ChatBotWithSpeculativeDecoding:
+    def __init__(self):
+        # Draft: Fast 7B model, Target: Accurate 70B model
+        self.draft_model = load_model("llama-7b")
+        self.target_model = load_model("llama-70b") 
+        self.acceptance_rate = 0.75  # 75% of draft tokens accepted on average
+    
+    def generate_response(self, user_message):
+        prompt = f"User: {user_message}\nAssistant: "
+        
+        response_tokens = []
+        current_input = self.tokenize(prompt)
+        
+        while not self.is_complete(response_tokens):
+            # Draft model quickly suggests next 5 tokens
+            draft_sequence = self.draft_model.generate_fast(
+                current_input, 
+                num_tokens=5
+            )
+            # Example: ["I", "think", "the", "best", "approach"]
+            
+            # Target model evaluates all 5 tokens at once
+            verification_result = self.target_model.verify_batch(
+                current_input,
+                draft_sequence
+            )
+            # Example: Accept ["I", "think", "the"], Reject ["best", "approach"]
+            
+            # Add accepted tokens to response
+            accepted = verification_result.accepted_tokens
+            response_tokens.extend(accepted)
+            current_input.extend(accepted)
+            
+            # If no tokens accepted, target model generates one
+            if len(accepted) == 0:
+                fallback_token = self.target_model.generate_single(current_input)
+                response_tokens.append(fallback_token)
+                current_input.append(fallback_token)
+        
+        return self.detokenize(response_tokens)
+
+# Performance comparison:
+# Traditional: User asks question → 3.2 seconds for response
+# Speculative: User asks question → 1.1 seconds for response (3x faster!)
+```
+
+---
+
+day - 13
+
+## Temporal Debugging Patterns
+
+### Definition:
+Temporal Debugging Patterns are debugging techniques that help developers understand and troubleshoot issues that occur across time, especially in asynchronous, distributed, or event-driven systems. These patterns capture the temporal sequence of events, state changes, and interactions to identify problems that only manifest over time or under specific timing conditions.
+
+**Key Properties:**
+- Time-aware: Focus on when events occur, not just what happens
+- Sequence tracking: Monitor order of operations across time
+- State evolution: Track how system state changes over time
+- Async-friendly: Handle non-linear execution flows
+- Historical context: Maintain timeline of past events
+
+**Common Temporal Issues:**
+- Race conditions
+- Timing-dependent bugs
+- Memory leaks over time
+- Performance degradation
+- State corruption in async systems
+
+### Example:
+Shopping cart sometimes loses items randomly
+```
+class TemporalCartDebugger {
+  constructor() {
+    this.timeline = [];
+    this.stateSnapshots = [];
+  }
+  
+  logEvent(event, data) {
+    const timestamp = Date.now();
+    const entry = {
+      timestamp,
+      event,
+      data,
+      stackTrace: new Error().stack,
+      cartState: JSON.parse(JSON.stringify(this.cart))
+    };
+    
+    this.timeline.push(entry);
+    console.log(`[${timestamp}] ${event}:`, data);
+  }
+  
+  addToCart(userId, productId) {
+    this.logEvent('ADD_TO_CART_START', { userId, productId });
+    
+    // Simulate async operation
+    setTimeout(() => {
+      this.logEvent('ADD_TO_CART_DB_WRITE', { productId });
+      this.cart.items.push(productId);
+      this.logEvent('ADD_TO_CART_COMPLETE', { 
+        productId, 
+        cartSize: this.cart.items.length 
+      });
+    }, Math.random() * 100); // Random delay reveals race condition!
+  }
+  
+  removeFromCart(userId, productId) {
+    this.logEvent('REMOVE_FROM_CART_START', { userId, productId });
+    
+    setTimeout(() => {
+      const index = this.cart.items.indexOf(productId);
+      if (index > -1) {
+        this.cart.items.splice(index, 1);
+        this.logEvent('REMOVE_FROM_CART_COMPLETE', { 
+          productId, 
+          cartSize: this.cart.items.length 
+        });
+      }
+    }, Math.random() * 50);
+  }
+  
+  analyzeTimeline() {
+    console.log('\n=== TEMPORAL ANALYSIS ===');
+    
+    // Find overlapping operations
+    const overlaps = this.findOverlappingOperations();
+    if (overlaps.length > 0) {
+      console.log('⚠️ RACE CONDITIONS DETECTED:');
+      overlaps.forEach(overlap => {
+        console.log(`- ${overlap.op1} and ${overlap.op2} overlapped`);
+      });
+    }
+    
+    // Check for unexpected state changes
+    this.detectUnexpectedStateChanges();
+  }
+}
+
+// Usage reveals the bug:
+const debugger = new TemporalCartDebugger();
+
+debugger.addToCart(123, 'product1');
+debugger.addToCart(123, 'product2');
+debugger.removeFromCart(123, 'product1'); // Race condition!
+
+// Output:
+// [1234567890] ADD_TO_CART_START: {userId: 123, productId: 'product1'}
+// [1234567891] ADD_TO_CART_START: {userId: 123, productId: 'product2'}  
+// [1234567892] REMOVE_FROM_CART_START: {userId: 123, productId: 'product1'}
+// [1234567935] REMOVE_FROM_CART_COMPLETE: {productId: 'product1', cartSize: 0}
+// [1234567956] ADD_TO_CART_COMPLETE: {productId: 'product1', cartSize: 1}  
+// [1234567978] ADD_TO_CART_COMPLETE: {productId: 'product2', cartSize: 2}
+// ⚠️ RACE CONDITION: Item removed before it was fully added!
+```
+
+---
