@@ -3,21 +3,26 @@ day - 1
 ## Delta Encoding
 
 ### Definition:
+
 Delta Encoding is a data compression technique that stores only the differences (deltas) between consecutive values instead of storing the absolute values. This is highly effective when data changes gradually or has patterns, as differences are typically smaller numbers that require less storage space.
 
 **Key Properties:**
+
 - Space efficient: Differences are usually smaller than original values
 - Pattern exploitation: Works best with sequential or time-series data
 - Simple concept: Store first value + sequence of changes
 - Reversible: Can reconstruct original data perfectly
 
 **How It Works:**
+
 - Store the first value as-is (base value)
 - For each subsequent value, store the difference from the previous value
 - To decode: start with base value and apply deltas sequentially
 
 ### Example:
+
 Stock Prices
+
 ```
 Original prices: [$100.50, $100.75, $100.60, $101.10, $100.90]
 Delta encoded:   [$100.50, +$0.25, -$0.15, +$0.50, -$0.20]
@@ -35,9 +40,11 @@ day - 2
 ### Chubby
 
 ### Definition:
+
 Chubby is a distributed lock service developed by Google that provides coarse-grained locking and reliable small-file storage for loosely-coupled distributed systems. It's designed to help coordinate activities across thousands of machines in a cluster, primarily for leader election, configuration storage, and naming services.
 
 **Key Properties:**
+
 - Coarse-grained locking: Held for hours/days, not seconds
 - High availability: Designed for 99.95% uptime
 - Small file storage: Acts like a simple file system for config data
@@ -45,13 +52,16 @@ Chubby is a distributed lock service developed by Google that provides coarse-gr
 - Paxos-based: Uses Paxos consensus algorithm for consistency
 
 **Architecture:**
+
 - Chubby cell: Typically 5 replicas (servers)
 - Master replica: One elected leader handles all requests
 - Client library: Applications use simple API
 - Lock delay: Prevents split-brain scenarios
 
 ### Example:
+
 Web service with multiple servers needs to elect a leader for background tasks
+
 ```
 Initial state:
 ┌─────────────────────────────────┐
@@ -72,9 +82,11 @@ day - 3
 ## ID Tokens (OpenID Connect)
 
 ### Definition:
+
 ID Tokens are JSON Web Tokens (JWTs) used in OpenID Connect (OIDC) to provide identity information about an authenticated user. Unlike access tokens (which grant API access), ID tokens contain claims about who the user is—their identity, profile information, and authentication context.
 
 **Key Properties:**
+
 - JWT format: Base64-encoded, cryptographically signed
 - Identity proof: Confirms user authentication occurred
 - Claims-based: Contains user attributes (name, email, etc.)
@@ -82,8 +94,11 @@ ID Tokens are JSON Web Tokens (JWTs) used in OpenID Connect (OIDC) to provide id
 - Client-consumed: Meant for the application, not APIs
 
 ### Example:
+
 User logs into a web app using Google OAuth
+
 - User Authentication Flow
+
 ```
 1. User clicks "Login with Google"
 2. App redirects to Google's authorization server
@@ -99,9 +114,11 @@ day - 6
 ## Sticky Session Architecture
 
 ### Definition:
+
 Sticky Session Architecture (also called Session Affinity) is a load balancing technique that routes all requests from a specific user to the same server for the duration of their session. This ensures that session data stored in server memory remains accessible throughout the user's interaction with the application.
 
 **Key Properties:**
+
 - User-server binding: Each user "sticks" to one server for the duration of their session
 - Session persistence: Session data stays in server memory
 - Load balancer routing: Routes based on user identifier (cookie, IP, etc.)
@@ -109,13 +126,16 @@ Sticky Session Architecture (also called Session Affinity) is a load balancing t
 - Simple implementation: No need for shared session storage
 
 **How It Works:**
+
 - User makes first request → Load balancer assigns them to a server
 - Load balancer creates "affinity" (remembers the assignment)
 - All subsequent requests from that user go to the same server
 - Server keeps session data in local memory/cache
 
-### Example: 
+### Example:
+
 E-commerce website with shopping cart functionality
+
 ```
 Initial Setup:
 ┌─────────────────┐
@@ -155,9 +175,11 @@ day - 7
 ## NFA(Nondeterministic Finite Automaton)
 
 ### Definition:
+
 A Nondeterministic Finite Automaton (NFA) is a computational model that can be in multiple states simultaneously and can make transitions without consuming input (epsilon transitions). Unlike a DFA, an NFA can have multiple possible transitions from a state on the same input symbol, making it "nondeterministic."
 
 **Key Properties:**
+
 - Multiple transitions: Can have several paths from one state on same input
 - Epsilon transitions: Can move between states without reading input (ε-transitions)
 - Multiple current states: Can be in several states at once
@@ -174,7 +196,9 @@ q₀: Initial state
 F: Set of accept states
 
 ### Example:
+
 Email Validation
+
 ```
 # NFA for simplified email: [a-z]+@[a-z]+\.com
 email_nfa = NFA(
@@ -188,7 +212,7 @@ email_nfa = NFA(
     } | {
         # @ symbol
         ('username', '@'): {'at'},
-        
+
         # Domain part (letters after @)
         ('at', letter): {'domain'} for letter in 'abcdefghijklmnopqrstuvwxyz'
     } | {
@@ -212,9 +236,11 @@ day - 8
 ## Behaviour Driven Development(BDD)
 
 ### Definition:
+
 Behavior Driven Development (BDD) is a software development methodology that focuses on defining and testing software behavior through collaboration between developers, testers, and business stakeholders. It uses natural language specifications to describe how the software should behave from the user's perspective, creating a shared understanding of requirements.
 
 **Key Properties:**
+
 - Natural language: Uses plain English to describe behavior
 - Collaboration focused: Bridges gap between technical and non-technical teams
 - Outside-in approach: Starts with user behavior, works inward to implementation
@@ -222,13 +248,16 @@ Behavior Driven Development (BDD) is a software development methodology that foc
 - Gherkin syntax: Common format using Given-When-Then structure
 
 **Core Concepts:**
+
 - Given: Initial context/preconditions
 - When: Action or event that triggers behavior
 - Then: Expected outcome or result
 - And/But: Additional conditions or outcomes
 
 ### Example:
+
 User login to e-commerce website
+
 ```
 Feature: User Login
   As a customer
@@ -260,7 +289,9 @@ Feature: User Login
     Then I should see "Account temporarily locked. Try again in 15 minutes"
     And the login form should be disabled
 ```
+
 BDD Process Flow:
+
 ```
 1. Discovery Workshop
    ↓
@@ -284,9 +315,11 @@ day - 9
 ## Payload Compression
 
 ### Definition:
+
 Payload Compression is a technique that reduces the size of data being transmitted over a network by encoding it in a more space-efficient format. It decreases bandwidth usage, speeds up data transfer, and reduces costs, especially important for large datasets, APIs, and web applications.
 
 **Key Properties:**
+
 - Size reduction: Compresses data before transmission
 - Automatic handling: Usually transparent to applications
 - Multiple algorithms: gzip, deflate, brotli, etc.
@@ -294,13 +327,16 @@ Payload Compression is a technique that reduces the size of data being transmitt
 - Reversible: Original data perfectly reconstructed
 
 ### How It Works:
+
 1. Client requests data with compression preference
 2. Server compresses response using specified algorithm
 3. Data transmitted in compressed format
 4. Client decompresses and uses original data
 
 ### Example:
+
 HTTP Compression Example:
+
 ```
 // Client Request
 GET /api/users HTTP/1.1
@@ -324,9 +360,11 @@ day - 10
 ## Speculative Decoding
 
 ### Definition:
+
 Speculative Decoding is an optimization technique for large language models (LLMs) that speeds up text generation by using a smaller, faster "draft" model to predict multiple tokens ahead, then having the larger "target" model verify and accept/reject these predictions in parallel. This reduces the number of sequential forward passes needed.
 
 **Key Properties:**
+
 - Two-model approach: Small draft model + large target model
 - Parallel verification: Target model checks multiple tokens at once
 - Mathematically equivalent: Same output distribution as normal decoding
@@ -334,6 +372,7 @@ Speculative Decoding is an optimization technique for large language models (LLM
 - Speculative execution: Generate candidates optimistically
 
 **How It Works:**
+
 1. Draft model quickly generates multiple token candidates
 2. Target model evaluates all candidates in parallel
 3. Accept/reject tokens based on probability comparison
@@ -341,47 +380,49 @@ Speculative Decoding is an optimization technique for large language models (LLM
 5. Repeat until completion
 
 ### Example:
+
 ChatBot Response:
+
 ```
 class ChatBotWithSpeculativeDecoding:
     def __init__(self):
         # Draft: Fast 7B model, Target: Accurate 70B model
         self.draft_model = load_model("llama-7b")
-        self.target_model = load_model("llama-70b") 
+        self.target_model = load_model("llama-70b")
         self.acceptance_rate = 0.75  # 75% of draft tokens accepted on average
-    
+
     def generate_response(self, user_message):
         prompt = f"User: {user_message}\nAssistant: "
-        
+
         response_tokens = []
         current_input = self.tokenize(prompt)
-        
+
         while not self.is_complete(response_tokens):
             # Draft model quickly suggests next 5 tokens
             draft_sequence = self.draft_model.generate_fast(
-                current_input, 
+                current_input,
                 num_tokens=5
             )
             # Example: ["I", "think", "the", "best", "approach"]
-            
+
             # Target model evaluates all 5 tokens at once
             verification_result = self.target_model.verify_batch(
                 current_input,
                 draft_sequence
             )
             # Example: Accept ["I", "think", "the"], Reject ["best", "approach"]
-            
+
             # Add accepted tokens to response
             accepted = verification_result.accepted_tokens
             response_tokens.extend(accepted)
             current_input.extend(accepted)
-            
+
             # If no tokens accepted, target model generates one
             if len(accepted) == 0:
                 fallback_token = self.target_model.generate_single(current_input)
                 response_tokens.append(fallback_token)
                 current_input.append(fallback_token)
-        
+
         return self.detokenize(response_tokens)
 
 # Performance comparison:
@@ -396,9 +437,11 @@ day - 13
 ## Temporal Debugging Patterns
 
 ### Definition:
+
 Temporal Debugging Patterns are debugging techniques that help developers understand and troubleshoot issues that occur across time, especially in asynchronous, distributed, or event-driven systems. These patterns capture the temporal sequence of events, state changes, and interactions to identify problems that only manifest over time or under specific timing conditions.
 
 **Key Properties:**
+
 - Time-aware: Focus on when events occur, not just what happens
 - Sequence tracking: Monitor order of operations across time
 - State evolution: Track how system state changes over time
@@ -406,6 +449,7 @@ Temporal Debugging Patterns are debugging techniques that help developers unders
 - Historical context: Maintain timeline of past events
 
 **Common Temporal Issues:**
+
 - Race conditions
 - Timing-dependent bugs
 - Memory leaks over time
@@ -413,14 +457,16 @@ Temporal Debugging Patterns are debugging techniques that help developers unders
 - State corruption in async systems
 
 ### Example:
+
 Shopping cart sometimes loses items randomly
+
 ```
 class TemporalCartDebugger {
   constructor() {
     this.timeline = [];
     this.stateSnapshots = [];
   }
-  
+
   logEvent(event, data) {
     const timestamp = Date.now();
     const entry = {
@@ -430,43 +476,43 @@ class TemporalCartDebugger {
       stackTrace: new Error().stack,
       cartState: JSON.parse(JSON.stringify(this.cart))
     };
-    
+
     this.timeline.push(entry);
     console.log(`[${timestamp}] ${event}:`, data);
   }
-  
+
   addToCart(userId, productId) {
     this.logEvent('ADD_TO_CART_START', { userId, productId });
-    
+
     // Simulate async operation
     setTimeout(() => {
       this.logEvent('ADD_TO_CART_DB_WRITE', { productId });
       this.cart.items.push(productId);
-      this.logEvent('ADD_TO_CART_COMPLETE', { 
-        productId, 
-        cartSize: this.cart.items.length 
+      this.logEvent('ADD_TO_CART_COMPLETE', {
+        productId,
+        cartSize: this.cart.items.length
       });
     }, Math.random() * 100); // Random delay reveals race condition!
   }
-  
+
   removeFromCart(userId, productId) {
     this.logEvent('REMOVE_FROM_CART_START', { userId, productId });
-    
+
     setTimeout(() => {
       const index = this.cart.items.indexOf(productId);
       if (index > -1) {
         this.cart.items.splice(index, 1);
-        this.logEvent('REMOVE_FROM_CART_COMPLETE', { 
-          productId, 
-          cartSize: this.cart.items.length 
+        this.logEvent('REMOVE_FROM_CART_COMPLETE', {
+          productId,
+          cartSize: this.cart.items.length
         });
       }
     }, Math.random() * 50);
   }
-  
+
   analyzeTimeline() {
     console.log('\n=== TEMPORAL ANALYSIS ===');
-    
+
     // Find overlapping operations
     const overlaps = this.findOverlappingOperations();
     if (overlaps.length > 0) {
@@ -475,7 +521,7 @@ class TemporalCartDebugger {
         console.log(`- ${overlap.op1} and ${overlap.op2} overlapped`);
       });
     }
-    
+
     // Check for unexpected state changes
     this.detectUnexpectedStateChanges();
   }
@@ -490,10 +536,10 @@ debugger.removeFromCart(123, 'product1'); // Race condition!
 
 // Output:
 // [1234567890] ADD_TO_CART_START: {userId: 123, productId: 'product1'}
-// [1234567891] ADD_TO_CART_START: {userId: 123, productId: 'product2'}  
+// [1234567891] ADD_TO_CART_START: {userId: 123, productId: 'product2'}
 // [1234567892] REMOVE_FROM_CART_START: {userId: 123, productId: 'product1'}
 // [1234567935] REMOVE_FROM_CART_COMPLETE: {productId: 'product1', cartSize: 0}
-// [1234567956] ADD_TO_CART_COMPLETE: {productId: 'product1', cartSize: 1}  
+// [1234567956] ADD_TO_CART_COMPLETE: {productId: 'product1', cartSize: 1}
 // [1234567978] ADD_TO_CART_COMPLETE: {productId: 'product2', cartSize: 2}
 // ⚠️ RACE CONDITION: Item removed before it was fully added!
 ```
@@ -505,9 +551,11 @@ day - 14
 ## Grouped-Query Attention (GQA)
 
 ### Definition:
+
 Grouped-Query Attention (GQA) is an optimization technique for transformer models that reduces memory usage and computational cost by sharing key-value (KV) pairs across multiple query heads. Instead of having separate KV pairs for each attention head, GQA groups multiple query heads to share the same KV pairs, creating a middle ground between Multi-Head Attention (MHA) and Multi-Query Attention (MQA).
 
 **Key Properties:**
+
 - Shared KV pairs: Multiple query heads share same key-value computations
 - Memory efficient: Reduces KV cache size during inference
 - Quality preservation: Better than MQA, close to full MHA performance
@@ -515,7 +563,9 @@ Grouped-Query Attention (GQA) is an optimization technique for transformer model
 - Inference speedup: Faster generation with less memory bandwidth
 
 ### Example:
+
 Language Model Inference:
+
 ```
 class LanguageModelWithGQA:
     def __init__(self, vocab_size=50000, hidden_size=4096, num_layers=32):
@@ -528,52 +578,52 @@ class LanguageModelWithGQA:
             ) for _ in range(num_layers)
         ]
         self.kv_cache = {}  # Store past key-values for fast generation
-    
+
     def generate_text(self, prompt, max_length=100):
         tokens = self.tokenize(prompt)
         generated = []
-        
+
         for step in range(max_length):
             # Forward pass with KV caching
             logits, new_cache = self.forward(tokens, use_cache=True)
-            
+
             # Sample next token
             next_token = self.sample(logits)
             generated.append(next_token)
-            
+
             # Update cache and continue with just the new token
             self.update_cache(new_cache)
             tokens = [next_token]  # Only process new token
-            
+
         return self.detokenize(generated)
-    
+
     def forward(self, tokens, use_cache=False):
         x = self.embed(tokens)
         new_cache = []
-        
+
         for i, layer in enumerate(self.layers):
             past_kv = self.kv_cache.get(i) if use_cache else None
             x, current_kv = layer(x, past_key_value=past_kv)
             new_cache.append(current_kv)
-        
+
         logits = self.lm_head(x)
         return logits, new_cache
-    
+
     def memory_usage_comparison(self, seq_length=2048):
         # GQA memory per layer
         gqa_mem = 8 * seq_length * 128 * 2 * 4  # 8 KV heads
-        
-        # Traditional MHA memory per layer  
+
+        # Traditional MHA memory per layer
         mha_mem = 32 * seq_length * 128 * 2 * 4  # 32 KV heads
-        
+
         # Total for all layers
         total_gqa = gqa_mem * self.num_layers / (1024**3)  # GB
         total_mha = mha_mem * self.num_layers / (1024**3)  # GB
-        
+
         print(f"GQA total KV cache: {total_gqa:.2f} GB")
-        print(f"MHA total KV cache: {total_mha:.2f} GB") 
+        print(f"MHA total KV cache: {total_mha:.2f} GB")
         print(f"Memory savings: {total_mha - total_gqa:.2f} GB")
-        
+
         return total_gqa, total_mha
 
 # Example: Llama2-70B style model
@@ -594,9 +644,11 @@ day - 15
 ## Progressive Scaling Patterns
 
 ### Definition:
+
 Progressive Scaling Patterns are architectural strategies that allow systems to grow incrementally from simple, single-instance setups to complex, distributed systems without requiring complete rewrites. These patterns enable businesses to start small and scale gradually as demand increases, evolving the architecture step-by-step while maintaining functionality and minimizing risk.
 
 **Key Properties:**
+
 - Incremental growth: Scale in manageable steps, not giant leaps
 - Backward compatibility: Each stage works with previous components
 - Risk mitigation: Gradual changes reduce deployment risks
@@ -607,7 +659,9 @@ Progressive Scaling Patterns are architectural strategies that allow systems to 
 Monolith → 2. Modular Monolith → 3. Microservices → 4. Distributed Systems
 
 ### Example
+
 Stage 1: Simple Monolith (MVP - 100 users)
+
 ```
 // Single Node.js application
 const express = require('express');
@@ -619,7 +673,7 @@ class EcommerceApp {
     this.db = new sqlite3.Database('ecommerce.db');
     this.setupRoutes();
   }
-  
+
   setupRoutes() {
     // All functionality in one app
     this.app.get('/products', this.getProducts.bind(this));
@@ -627,16 +681,16 @@ class EcommerceApp {
     this.app.get('/users/:id', this.getUser.bind(this));
     this.app.post('/payments', this.processPayment.bind(this));
   }
-  
+
   async getProducts(req, res) {
     // Simple database query
     const products = await this.queryDb('SELECT * FROM products');
     res.json(products);
   }
-  
+
   async createOrder(req, res) {
     const { userId, productIds, paymentInfo } = req.body;
-    
+
     // Everything happens in one transaction
     await this.db.run('BEGIN TRANSACTION');
     try {
@@ -645,7 +699,7 @@ class EcommerceApp {
       await this.processPayment(paymentInfo);
       await this.sendOrderEmail(userId, orderId);
       await this.db.run('COMMIT');
-      
+
       res.json({ orderId, status: 'success' });
     } catch (error) {
       await this.db.run('ROLLBACK');
@@ -663,6 +717,7 @@ app.listen(3000, () => console.log('E-commerce running on port 3000'));
 ```
 
 Stage 2: Load Balanced Monolith (1,000 users)
+
 ```
 // Add load balancer + multiple instances
 // nginx.conf
@@ -690,13 +745,13 @@ class EcommerceApp {
       database: 'ecommerce',
       pool: { min: 5, max: 20 }
     });
-    
+
     // Add session store for multiple instances
     this.sessionStore = new RedisStore({
       host: 'redis-server'
     });
   }
-  
+
   // Same application logic, but now scalable
 }
 
@@ -707,13 +762,13 @@ services:
     build: .
     deploy:
       replicas: 3  # Easy to increase
-  
+
   postgres:
     image: postgres:13
-    
+
   redis:
     image: redis:7
-    
+
   nginx:
     image: nginx
     ports:
@@ -724,22 +779,23 @@ services:
 ```
 
 Stage 3: Modular Monolith (10,000 users)
+
 ```
 // Separate modules within same codebase
 class EcommerceApp {
   constructor() {
     this.app = express();
-    
+
     // Modular architecture
     this.productService = new ProductService(this.db);
     this.orderService = new OrderService(this.db);
     this.userService = new UserService(this.db);
     this.paymentService = new PaymentService(this.db);
     this.inventoryService = new InventoryService(this.db);
-    
+
     this.setupRoutes();
   }
-  
+
   setupRoutes() {
     // Route to appropriate service
     this.app.use('/products', this.createProductRoutes());
@@ -747,33 +803,33 @@ class EcommerceApp {
     this.app.use('/users', this.createUserRoutes());
     this.app.use('/payments', this.createPaymentRoutes());
   }
-  
+
   createOrderRoutes() {
     const router = express.Router();
-    
+
     router.post('/', async (req, res) => {
       const { userId, productIds, paymentInfo } = req.body;
-      
+
       try {
         // Services communicate through method calls
         const user = await this.userService.getUser(userId);
         const products = await this.productService.getProducts(productIds);
         const inventory = await this.inventoryService.checkAvailability(productIds);
-        
+
         if (!inventory.available) {
           return res.status(400).json({ error: 'Insufficient inventory' });
         }
-        
+
         const order = await this.orderService.createOrder(user, products);
         await this.inventoryService.reserveItems(productIds);
         await this.paymentService.processPayment(paymentInfo);
-        
+
         res.json({ orderId: order.id, status: 'success' });
       } catch (error) {
         res.status(500).json({ error: error.message });
       }
     });
-    
+
     return router;
   }
 }
@@ -783,7 +839,7 @@ class OrderService {
   constructor(database) {
     this.db = database;
   }
-  
+
   async createOrder(user, products) {
     return await this.db.orders.create({
       userId: user.id,
@@ -792,7 +848,7 @@ class OrderService {
       status: 'pending'
     });
   }
-  
+
   async getOrder(orderId) {
     return await this.db.orders.findById(orderId);
   }
@@ -803,6 +859,7 @@ class OrderService {
 ```
 
 Stage 4: Microservices (100,000+ users)
+
 ```
 // Separate applications for each service
 
@@ -814,7 +871,7 @@ class ProductService {
     this.cache = new Redis();
     this.setupRoutes();
   }
-  
+
   setupRoutes() {
     this.app.get('/products', async (req, res) => {
       // Check cache first
@@ -822,12 +879,12 @@ class ProductService {
       if (cached) {
         return res.json(JSON.parse(cached));
       }
-      
+
       const products = await this.db.find({});
       await this.cache.setex('products:all', 300, JSON.stringify(products));
       res.json(products);
     });
-    
+
     this.app.get('/products/:id', async (req, res) => {
       const product = await this.db.findById(req.params.id);
       res.json(product);
@@ -843,24 +900,24 @@ class OrderService {
     this.eventBus = new EventBus(); // For communication
     this.setupRoutes();
   }
-  
+
   setupRoutes() {
     this.app.post('/orders', async (req, res) => {
       const { userId, productIds, paymentInfo } = req.body;
-      
+
       try {
         // Make HTTP calls to other services
         const user = await this.callUserService(userId);
         const products = await this.callProductService(productIds);
         const inventory = await this.callInventoryService(productIds);
-        
+
         if (!inventory.available) {
           return res.status(400).json({ error: 'Insufficient inventory' });
         }
-        
+
         // Create order
         const order = await this.createOrder(user, products);
-        
+
         // Publish events for other services
         await this.eventBus.publish('order.created', {
           orderId: order.id,
@@ -868,19 +925,19 @@ class OrderService {
           productIds,
           total: order.total
         });
-        
+
         res.json({ orderId: order.id, status: 'pending' });
       } catch (error) {
         res.status(500).json({ error: error.message });
       }
     });
   }
-  
+
   async callUserService(userId) {
     const response = await fetch(`http://user-service:3001/users/${userId}`);
     return await response.json();
   }
-  
+
   async callProductService(productIds) {
     const response = await fetch(`http://product-service:3002/products`, {
       method: 'POST',
@@ -896,14 +953,14 @@ class EventBus {
   constructor() {
     this.kafka = new KafkaClient();
   }
-  
+
   async publish(topic, data) {
     await this.kafka.send({
       topic,
       messages: [{ value: JSON.stringify(data) }]
     });
   }
-  
+
   async subscribe(topic, handler) {
     await this.kafka.subscribe({ topic });
     await this.kafka.run({
@@ -921,11 +978,11 @@ class InventoryService {
     this.eventBus = new EventBus();
     this.setupEventHandlers();
   }
-  
+
   async setupEventHandlers() {
     await this.eventBus.subscribe('order.created', async (orderData) => {
       await this.reserveItems(orderData.productIds);
-      
+
       await this.eventBus.publish('inventory.reserved', {
         orderId: orderData.orderId,
         productIds: orderData.productIds
@@ -936,6 +993,7 @@ class InventoryService {
 ```
 
 Stage 5: Distributed System with Auto-scaling (1M+ users)
+
 ```
 # Kubernetes deployment with auto-scaling
 apiVersion: apps/v1
@@ -1037,9 +1095,11 @@ day - 16
 ## Redlock Algorithm
 
 ### Definition
+
 Redlock Algorithm is a distributed locking mechanism designed to create reliable locks across multiple Redis instances. It solves the problem of achieving mutual exclusion in distributed systems by requiring a majority of Redis nodes to agree on a lock, preventing the issues that can occur with single-point-of-failure locking systems.
 
 **Key Properties:**
+
 - Distributed consensus: Requires majority (N/2 + 1) of Redis nodes to agree
 - Fault tolerance: Works even if some Redis instances fail
 - Time-based expiration: Locks automatically expire to prevent deadlocks
@@ -1047,6 +1107,7 @@ Redlock Algorithm is a distributed locking mechanism designed to create reliable
 - Mutual exclusion: Only one client can hold a lock at a time
 
 **How It Works:**
+
 1. Acquire lock on majority of Redis instances
 2. Check elapsed time is less than lock validity
 3. Use the lock for critical section
@@ -1054,7 +1115,9 @@ Redlock Algorithm is a distributed locking mechanism designed to create reliable
 5. Handle failures gracefully
 
 ### Example
+
 Payment Processing
+
 ```
 class PaymentProcessor {
   constructor() {
@@ -1066,66 +1129,66 @@ class PaymentProcessor {
       { host: 'redis-central-1' }
     ]);
   }
-  
+
   async processPayment(userId, amount, paymentMethod) {
     const lockKey = `payment-lock:${userId}`;
-    
+
     try {
       // Prevent duplicate payments from same user
       const lock = await this.redlock.lock(lockKey, 30000); // 30 seconds
-      
+
       console.log(`🔒 Processing payment for user ${userId}`);
-      
+
       // Check user balance
       const user = await this.getUserAccount(userId);
       if (user.balance < amount) {
         throw new Error('Insufficient funds');
       }
-      
+
       // Process payment with external provider
       const paymentResult = await this.chargePaymentMethod(paymentMethod, amount);
-      
+
       if (paymentResult.success) {
         // Update user balance
         await this.updateUserBalance(userId, user.balance - amount);
-        
+
         // Record transaction
         await this.recordTransaction(userId, amount, paymentResult.transactionId);
-        
+
         console.log(`💰 Payment successful: $${amount} from user ${userId}`);
-        
+
         await this.redlock.unlock(lock);
         return { success: true, transactionId: paymentResult.transactionId };
       } else {
         await this.redlock.unlock(lock);
         return { success: false, error: paymentResult.error };
       }
-      
+
     } catch (error) {
       console.error(`❌ Payment failed for user ${userId}:`, error.message);
       return { success: false, error: error.message };
     }
   }
-  
+
   async processRefund(transactionId) {
     const lockKey = `refund-lock:${transactionId}`;
-    
+
     try {
       const lock = await this.redlock.lock(lockKey, 30000);
-      
+
       // Ensure refund isn't processed twice
       const transaction = await this.getTransaction(transactionId);
       if (transaction.refunded) {
         throw new Error('Transaction already refunded');
       }
-      
+
       // Process refund
       await this.processRefundWithProvider(transaction);
       await this.markTransactionRefunded(transactionId);
-      
+
       await this.redlock.unlock(lock);
       return { success: true };
-      
+
     } catch (error) {
       console.error(`Refund failed:`, error.message);
       return { success: false, error: error.message };
@@ -1152,9 +1215,11 @@ day - 17
 ## Long Short Term Memory(LSTM)
 
 ### Definition:
+
 Long Short-Term Memory (LSTM) is a type of recurrent neural network (RNN) designed to learn and remember patterns in sequential data over long periods. Unlike traditional RNNs that suffer from vanishing gradients and forget information quickly, LSTMs use special "gates" to control what information to remember, forget, or output, making them excellent for tasks involving sequences like text, time series, or speech.
 
 **Key Properties:**
+
 - Memory cells: Store information over long sequences
 - Three gates: Forget, input, and output gates control information flow
 - Gradient stability: Solves vanishing gradient problem
@@ -1162,12 +1227,15 @@ Long Short-Term Memory (LSTM) is a type of recurrent neural network (RNN) design
 - Context awareness: Remembers relevant past information
 
 **LSTM Gates:**
+
 - Forget Gate: Decides what to remove from memory
 - Input Gate: Decides what new information to store
 - Output Gate: Decides what parts of memory to output
 
 ### Example:
+
 Text Generation
+
 ```
 import string
 
@@ -1176,7 +1244,7 @@ class TextGenerator:
         self.chars = sorted(list(set(text_data)))
         self.char_to_idx = {ch: i for i, ch in enumerate(self.chars)}
         self.idx_to_char = {i: ch for i, ch in enumerate(self.chars)}
-        
+
         self.vocab_size = len(self.chars)
         self.model = SimpleLSTM(
             input_size=self.vocab_size,
@@ -1184,26 +1252,26 @@ class TextGenerator:
             output_size=self.vocab_size,
             num_layers=2
         )
-        
+
     def text_to_sequences(self, text, seq_length=50):
         sequences = []
         targets = []
-        
+
         for i in range(len(text) - seq_length):
             # Input sequence
             seq = text[i:i + seq_length]
             # Target (next character)
             target = text[i + seq_length]
-            
+
             # Convert to one-hot encoding
             seq_encoded = self.encode_sequence(seq)
             target_encoded = self.char_to_idx[target]
-            
+
             sequences.append(seq_encoded)
             targets.append(target_encoded)
-        
+
         return torch.FloatTensor(sequences), torch.LongTensor(targets)
-    
+
     def encode_sequence(self, sequence):
         encoded = []
         for char in sequence:
@@ -1211,35 +1279,35 @@ class TextGenerator:
             one_hot[self.char_to_idx[char]] = 1
             encoded.append(one_hot)
         return encoded
-    
+
     def generate_text(self, seed_text, length=100, temperature=1.0):
         """Generate text starting with seed_text"""
         self.model.eval()
         generated = seed_text
-        
+
         # Convert seed to input sequence
         current_seq = seed_text[-50:]  # Use last 50 characters
-        
+
         for _ in range(length):
             # Encode current sequence
             seq_encoded = self.encode_sequence(current_seq)
             input_tensor = torch.FloatTensor(seq_encoded).unsqueeze(0)
-            
+
             # Get prediction
             with torch.no_grad():
                 output = self.model(input_tensor)
-                
+
                 # Apply temperature for creativity
                 output = output / temperature
                 probabilities = torch.softmax(output, dim=-1)
-                
+
                 # Sample next character
                 next_char_idx = torch.multinomial(probabilities, 1).item()
                 next_char = self.idx_to_char[next_char_idx]
-                
+
                 generated += next_char
                 current_seq = current_seq[1:] + next_char  # Slide window
-        
+
         return generated
 
 # Example usage
@@ -1269,9 +1337,11 @@ day - 20
 ## Dead Letter Queue(DLQ)
 
 ### Definition:
+
 Dead Letter Queue (DLQ) is a service-side queue that stores messages that couldn't be processed successfully after multiple retry attempts. When a message fails repeatedly due to errors, corruption, or processing issues, it gets moved to the DLQ instead of being lost or continuously retried, allowing developers to investigate and handle problematic messages separately.
 
 **Key Properties:**
+
 - Failure isolation: Separates problematic messages from healthy flow
 - Retry exhaustion: Triggered after max retry attempts reached
 - Message preservation: Keeps failed messages for analysis
@@ -1279,6 +1349,7 @@ Dead Letter Queue (DLQ) is a service-side queue that stores messages that couldn
 - Manual intervention: Allows debugging and reprocessing
 
 **How It Works:**
+
 - Message fails processing in main queue
 - Retry mechanism attempts reprocessing (1-N times)
 - Still failing? Message moved to DLQ
@@ -1286,7 +1357,9 @@ Dead Letter Queue (DLQ) is a service-side queue that stores messages that couldn
 - Investigate DLQ messages separately for root cause analysis and resolution
 
 ### Example:
+
 Email Service
+
 ```
 class EmailService {
   constructor() {
@@ -1294,7 +1367,7 @@ class EmailService {
     this.emailDLQ = new Queue('emails-dlq');
     this.maxRetries = 5;
   }
-  
+
   async sendEmailWithDLQ(emailData) {
     const message = {
       id: generateUniqueId(),
@@ -1302,39 +1375,39 @@ class EmailService {
       retryCount: 0,
       createdAt: Date.now()
     };
-    
+
     await this.emailQueue.send(message);
   }
-  
+
   async processEmailQueue() {
     while (true) {
       const message = await this.emailQueue.receive();
-      
+
       if (message) {
         await this.handleEmailMessage(message);
       }
-      
+
       await this.sleep(1000);
     }
   }
-  
+
   async handleEmailMessage(message) {
     try {
       const email = message.body;
-      
+
       // Validate email
       if (!this.isValidEmail(email)) {
         throw new Error('Invalid email format');
       }
-      
+
       // Send email
       await this.sendEmail(email);
-      
+
       console.log(`📧 Email sent to ${email.to}`);
-      
+
     } catch (error) {
       const retryCount = message.retryCount || 0;
-      
+
       if (retryCount >= this.maxRetries) {
         // Move to DLQ with error details
         await this.emailDLQ.send({
@@ -1343,85 +1416,85 @@ class EmailService {
           errorMessage: error.message,
           retryCount: retryCount,
           failedAt: new Date().toISOString(),
-          
+
           // Add context for debugging
           serverResponse: error.response,
           emailProvider: 'sendgrid',
           lastAttempt: Date.now()
         });
-        
+
         console.log(`💀 Email moved to DLQ: ${email.to}`);
-        
+
         // Alert ops team
         await this.alertOpsTeam({
           message: 'Email moved to Dead Letter Queue',
           recipient: message.body.to,
           error: error.message
         });
-        
+
       } else {
         // Retry with exponential backoff
         message.retryCount = retryCount + 1;
         message.retryAt = Date.now() + (1000 * Math.pow(2, retryCount));
-        
+
         setTimeout(async () => {
           await this.emailQueue.send(message);
         }, 1000 * Math.pow(2, retryCount));
-        
+
         console.log(`🔄 Email retry ${retryCount + 1}/${this.maxRetries}: ${message.body.to}`);
       }
     }
   }
-  
+
   // DLQ Management Dashboard
   async getDLQStats() {
     const dlqMessages = await this.emailDLQ.getAllMessages();
-    
+
     const stats = {
       totalFailed: dlqMessages.length,
       failureTypes: {},
       oldestFailure: null,
       recentFailures: 0
     };
-    
+
     const now = Date.now();
     const oneHourAgo = now - (60 * 60 * 1000);
-    
+
     dlqMessages.forEach(msg => {
       // Count failure types
       const errorType = msg.errorType || 'Unknown';
       stats.failureTypes[errorType] = (stats.failureTypes[errorType] || 0) + 1;
-      
+
       // Find oldest failure
       if (!stats.oldestFailure || msg.failedAt < stats.oldestFailure) {
         stats.oldestFailure = msg.failedAt;
       }
-      
+
       // Count recent failures
       if (msg.lastAttempt > oneHourAgo) {
         stats.recentFailures++;
       }
     });
-    
+
     return stats;
   }
-  
+
   async reprocessDLQMessages() {
     const dlqMessages = await this.emailDLQ.getAllMessages();
     let reprocessed = 0;
-    
+
     for (const msg of dlqMessages) {
       try {
         // Attempt to fix common issues
         const fixedEmail = await this.fixEmailIssues(msg.originalEmail);
-        
+
         if (fixedEmail) {
           // Send back to main queue for reprocessing
           await this.sendEmailWithDLQ(fixedEmail);
-          
+
           // Remove from DLQ
           await this.emailDLQ.delete(msg);
-          
+
           reprocessed++;
           console.log(`🔧 Reprocessed email: ${fixedEmail.to}`);
         }
@@ -1429,7 +1502,7 @@ class EmailService {
         console.log(`❌ Cannot fix email: ${error.message}`);
       }
     }
-    
+
     return { reprocessed, remaining: dlqMessages.length - reprocessed };
   }
 }
@@ -1444,7 +1517,7 @@ emailService.processEmailQueue();
 setInterval(async () => {
   const stats = await emailService.getDLQStats();
   console.log('DLQ Stats:', stats);
-  
+
   if (stats.totalFailed > 10) {
     console.log('🚨 High number of failed emails in DLQ!');
   }
@@ -1453,3 +1526,256 @@ setInterval(async () => {
 
 ---
 
+day - 21
+
+## Bulkhead Pattern
+
+### Definition:
+
+Bulkhead Pattern is a fault tolerance design pattern that isolates critical resources and functionality into separate pools to prevent failures in one area from cascading and bringing down the entire system. Named after ship bulkheads that prevent water from spreading between compartments, this pattern compartmentalizes system components so that if one fails, others continue operating normally.
+
+**Key Properties:**
+
+- Resource isolation: Separate pools for different operations
+- Failure containment: Problems don't spread across boundaries
+- Independent scaling: Each compartment can scale separately
+- Performance protection: Critical operations stay unaffected
+- Resource allocation: Guaranteed resources for important functions
+
+**Core Concept:**
+Instead of sharing resources, create separate "compartments" for different types of operations or users.
+
+### Example:
+
+E-commerce Platform
+
+```
+class EcommercePlatform {
+  constructor() {
+    this.setupBulkheads();
+  }
+
+  setupBulkheads() {
+    // Customer-facing bulkhead (highest priority)
+    this.customerBulkhead = {
+      database: new ConnectionPool({ max: 15, min: 10 }),
+      cache: new RedisPool({ max: 10, min: 5 }),
+      threadPool: new ThreadPool({ core: 8, max: 15 }),
+      rateLimiter: new RateLimiter({ rpm: 10000 })
+    };
+
+    // Admin operations bulkhead (medium priority)
+    this.adminBulkhead = {
+      database: new ConnectionPool({ max: 8, min: 3 }),
+      cache: new RedisPool({ max: 5, min: 2 }),
+      threadPool: new ThreadPool({ core: 3, max: 8 }),
+      rateLimiter: new RateLimiter({ rpm: 1000 })
+    };
+
+    // Analytics bulkhead (lowest priority)
+    this.analyticsBulkhead = {
+      database: new ReadReplicaPool({ max: 5, min: 2 }),
+      cache: new RedisPool({ max: 3, min: 1 }),
+      threadPool: new ThreadPool({ core: 2, max: 5 }),
+      rateLimiter: new RateLimiter({ rpm: 100 })
+    };
+
+    // Background jobs bulkhead
+    this.backgroundBulkhead = {
+      database: new ConnectionPool({ max: 3, min: 1 }),
+      threadPool: new ThreadPool({ core: 2, max: 4 }),
+      rateLimiter: new RateLimiter({ rpm: 50 })
+    };
+  }
+
+  // Customer operations - highest priority resources
+  async placeOrder(customerId, orderData) {
+    return await this.executeInBulkhead('customer', async () => {
+      console.log('🛒 Processing customer order');
+
+      const connection = await this.customerBulkhead.database.getConnection();
+      const cache = await this.customerBulkhead.cache.getClient();
+
+      try {
+        // Check inventory
+        const inventory = await cache.get(`inventory:${orderData.productId}`);
+
+        if (!inventory || inventory < orderData.quantity) {
+          const dbInventory = await connection.query(
+            'SELECT quantity FROM inventory WHERE product_id = ?',
+            [orderData.productId]
+          );
+
+          if (dbInventory.quantity < orderData.quantity) {
+            throw new Error('Insufficient inventory');
+          }
+        }
+
+        // Create order
+        const order = await connection.query(
+          'INSERT INTO orders (customer_id, product_id, quantity) VALUES (?, ?, ?)',
+          [customerId, orderData.productId, orderData.quantity]
+        );
+
+        // Update cache
+        await cache.decr(`inventory:${orderData.productId}`, orderData.quantity);
+
+        return { orderId: order.insertId, status: 'confirmed' };
+
+      } finally {
+        connection.release();
+      }
+    });
+  }
+
+  // Admin operations - medium priority resources
+  async updateProductInfo(productId, updates) {
+    return await this.executeInBulkhead('admin', async () => {
+      console.log('⚙️ Admin updating product');
+
+      const connection = await this.adminBulkhead.database.getConnection();
+
+      try {
+        return await connection.query(
+          'UPDATE products SET name = ?, price = ? WHERE id = ?',
+          [updates.name, updates.price, productId]
+        );
+      } finally {
+        connection.release();
+      }
+    });
+  }
+
+  // Analytics - lowest priority resources
+  async generateSalesReport(startDate, endDate) {
+    return await this.executeInBulkhead('analytics', async () => {
+      console.log('📈 Generating analytics report');
+
+      const connection = await this.analyticsBulkhead.database.getConnection();
+
+      try {
+        // Heavy analytical query
+        return await connection.query(`
+          SELECT
+            DATE(created_at) as date,
+            COUNT(*) as orders,
+            SUM(total) as revenue,
+            AVG(total) as avg_order_value
+          FROM orders o
+          JOIN order_items oi ON o.id = oi.order_id
+          JOIN products p ON oi.product_id = p.id
+          WHERE o.created_at BETWEEN ? AND ?
+          GROUP BY DATE(created_at)
+          ORDER BY date
+        `, [startDate, endDate]);
+      } finally {
+        connection.release();
+      }
+    });
+  }
+
+  // Background tasks - separate resources
+  async processEmailQueue() {
+    return await this.executeInBulkhead('background', async () => {
+      console.log('📧 Processing background emails');
+
+      const connection = await this.backgroundBulkhead.database.getConnection();
+
+      try {
+        const pendingEmails = await connection.query(
+          'SELECT * FROM email_queue WHERE status = "pending" LIMIT 100'
+        );
+
+        for (const email of pendingEmails) {
+          await this.sendEmail(email);
+          await connection.query(
+            'UPDATE email_queue SET status = "sent" WHERE id = ?',
+            [email.id]
+          );
+        }
+
+        return { processed: pendingEmails.length };
+      } finally {
+        connection.release();
+      }
+    });
+  }
+
+  async executeInBulkhead(bulkheadType, operation) {
+    const bulkhead = this.getBulkhead(bulkheadType);
+
+    // Check rate limiting
+    if (!await bulkhead.rateLimiter.allowRequest()) {
+      throw new Error(`Rate limit exceeded for ${bulkheadType} operations`);
+    }
+
+    // Execute in thread pool
+    return await bulkhead.threadPool.execute(operation);
+  }
+
+  getBulkhead(type) {
+    const bulkheads = {
+      'customer': this.customerBulkhead,
+      'admin': this.adminBulkhead,
+      'analytics': this.analyticsBulkhead,
+      'background': this.backgroundBulkhead
+    };
+
+    return bulkheads[type];
+  }
+
+  // Monitoring and health checks
+  async getBulkheadStatus() {
+    return {
+      customer: {
+        activeConnections: this.customerBulkhead.database.activeConnections,
+        queueLength: this.customerBulkhead.threadPool.queueLength,
+        rateLimitRemaining: this.customerBulkhead.rateLimiter.remaining
+      },
+      admin: {
+        activeConnections: this.adminBulkhead.database.activeConnections,
+        queueLength: this.adminBulkhead.threadPool.queueLength
+      },
+      analytics: {
+        activeConnections: this.analyticsBulkhead.database.activeConnections,
+        queueLength: this.analyticsBulkhead.threadPool.queueLength
+      },
+      background: {
+        activeConnections: this.backgroundBulkhead.database.activeConnections,
+        queueLength: this.backgroundBulkhead.threadPool.queueLength
+      }
+    };
+  }
+}
+
+// Usage example
+const platform = new EcommercePlatform();
+
+// Simulate different types of load
+async function simulateLoad() {
+  const results = await Promise.allSettled([
+    // Customer operations (critical) - will always work
+    platform.placeOrder('customer123', { productId: 1, quantity: 2 }),
+    platform.placeOrder('customer456', { productId: 2, quantity: 1 }),
+
+    // Admin operations (medium priority) - works if resources available
+    platform.updateProductInfo(1, { name: 'New Product Name', price: 29.99 }),
+
+    // Analytics (low priority) - might be throttled
+    platform.generateSalesReport('2023-01-01', '2023-12-31'),
+
+    // Background tasks (lowest priority) - runs when possible
+    platform.processEmailQueue()
+  ]);
+
+  console.log('Results:', results.map(r => r.status));
+
+  // Check bulkhead health
+  const status = await platform.getBulkheadStatus();
+  console.log('Bulkhead Status:', status);
+}
+
+simulateLoad();
+```
+
+---
