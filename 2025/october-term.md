@@ -2055,7 +2055,7 @@ Total: 1 round trip (or 0 with connection resumption)
 
 day - 27
 
-## Agent2Agent (A2A) Protocol
+## Agent2Agent(A2A) Protocol
 
 ### Definition:
 
