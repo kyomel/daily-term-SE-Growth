@@ -1473,3 +1473,36 @@ The Paradox Emerges:
 ```
 
 ---
+
+day - 19
+
+## Persona Scheduler Architecture
+
+### Definition:
+
+Persona Scheduler Architecture is a system design pattern that schedules tasks, resources, or services based on different user personas (user types with distinct characteristics, preferences, and behaviors). Instead of treating all users the same, it customizes scheduling decisions based on user profiles, priorities, and usage patterns.
+
+**Key characteristics:**
+
+- User-centric scheduling decisions
+- Different scheduling rules per persona type
+- Optimizes resource allocation based on user behavior
+- Personalizes service delivery timing
+
+### Example:
+
+Healthcare Appointment System
+
+```
+Traditional Scheduler: First-come, first-served
+
+Queue: Patient A → Patient B → Patient C → Patient D
+Persona Scheduler Architecture:
+
+👴 Senior Citizens    → Priority: High, Time: Morning slots
+👩‍💼 Working Adults     → Priority: Medium, Time: Evening/Weekend
+👶 Parents with Kids  → Priority: Medium, Time: After school hours
+🏃‍♂️ Athletes          → Priority: Low, Time: Flexible
+```
+
+---
