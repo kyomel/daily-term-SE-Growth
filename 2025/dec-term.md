@@ -1,10 +1,10 @@
 day - 1
 
-## Dark Deployments or Dark Launching
+## Dark Deployments
 
 ### Definition:
 
-Dark Deployments (also called Dark Launching) is a deployment strategy where new features or code changes are released to production but remain hidden from regular users. The new functionality runs silently in the background, allowing teams to test performance, stability, and behavior in a real production environment without any user impact.
+Dark Deployments (also called Dark Launches) is a deployment strategy where new features or code changes are released to production but remain hidden from regular users. The new functionality runs silently in the background, allowing teams to test performance, stability, and behavior in a real production environment without any user impact.
 
 **Key characteristics:**
 
