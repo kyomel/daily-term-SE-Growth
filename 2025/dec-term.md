@@ -600,3 +600,53 @@ Database: │     1 query only ✅              HEALTHY
 ```
 
 ---
+
+day - 11
+
+## Principle of Least Privilege(PoLP)
+
+### Definition:
+
+Principle of Least Privilege (PoLP) is a security concept where users, applications, and systems are granted only the minimum permissions necessary to perform their specific tasks - nothing more. By limiting access rights, organizations reduce the attack surface, minimize potential damage from breaches, and prevent accidental or intentional misuse of resources.
+
+**Key characteristics:**
+
+- Grant minimum required access only
+- Permissions based on job function
+- Temporary elevated access when needed
+- Regular access reviews and revocation
+- Applies to users, applications, and services
+
+### Example:
+
+Company Employee Access
+Scenario: Different employees need different system access
+
+```
+With PoLP (Minimum Required Access):
+
+┌─────────────────────────────────────────────────────┐
+│              GOOD: LEAST PRIVILEGE                  │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  New Intern "Alex" receives:                        │
+│  ┌─────────────────────────────────────────────┐   │
+│  │  ✓ Blog content editor access               │   │
+│  │  ✗ No database access                       │   │
+│  │  ✗ No admin panel access                    │   │
+│  │  ✗ No production server access              │   │
+│  │  ✗ No financial records access              │   │
+│  │  ✗ No customer data access                  │   │
+│  └─────────────────────────────────────────────┘   │
+│                                                     │
+│  Alex's actual job: Update blog posts ✅           │
+│                                                     │
+│  BENEFITS:                                          │
+│  ✅ Can't accidentally break critical systems      │
+│  ✅ No access to sensitive data                    │
+│  ✅ If account hacked → minimal damage             │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
