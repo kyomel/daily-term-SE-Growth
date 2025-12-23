@@ -1351,3 +1351,27 @@ Use arrow keys to navigate, Enter to select
 ```
 
 ---
+
+day - 23
+
+## Single Source of Truth (SSOT)
+
+### Definition:
+
+SSOT is a principle where every piece of data or information is stored in exactly one place, and all systems reference that single location. This ensures everyone accesses the same accurate, up-to-date information instead of having multiple conflicting copies.
+
+Core idea: One master version that everyone uses, not multiple versions scattered everywhere.
+
+### Example:
+
+Scenario: Customer contact information
+
+```
+With SSOT:
+
+- One central CRM database stores: john@email.com
+- Sales, Support, and Marketing all access the same database
+- Update once → everyone sees the change instantly
+```
+
+---
