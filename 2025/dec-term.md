@@ -1375,3 +1375,31 @@ With SSOT:
 ```
 
 ---
+
+day - 24
+
+## Design for Partial Failure
+
+### Definition:
+
+Design for Partial Failure is a system design principle that assumes some components will fail, so the system is built to continue functioning (possibly with reduced capabilities) instead of completely crashing.
+
+Core idea: Build systems that gracefully handle failures of individual parts, not expect everything to work perfectly all the time.
+
+### Example:
+
+Scenario: Online Shopping Website
+
+```
+With Design for Partial Failure:
+
+Recommendation engine crashes
+        ↓
+Website still works, just shows:
+- "You might also like..." section is empty or shows generic items
+- Shopping cart still functions
+- Checkout still works
+- Users can still browse and buy
+```
+
+---
