@@ -417,3 +417,55 @@ DAST Scanner (Attacking):
 ```
 
 ---
+
+day - 13
+
+## MongoBleed Vulnerability
+
+### Definition:
+
+MongoBleed is a critical security vulnerability in MongoDB that allows attackers to leak sensitive data from server memory through crafted queries. Similar to the infamous Heartbleed bug, it exploits improper memory handling to read data that should be inaccessible, potentially exposing passwords, API keys, user data, and other secrets stored in adjacent memory locations.
+
+Key idea: Trick MongoDB into reading beyond intended boundaries and reveal secrets from memory.
+
+**Why It Matters**
+
+Impact of MongoBleed:
+
+🔓 Leak sensitive data (passwords, tokens, PII)
+💳 Expose credit card numbers and payment info
+🔑 Steal API keys and authentication tokens
+📊 Access other users' data from memory
+🎯 No authentication required in some cases
+
+Severity: CRITICAL (CVSS Score: 9.8/10)
+
+### Example:
+```
+Normal MongoDB Query:
+┌─────────────────────────────────────┐
+│ Query: Find user with id="123"     │
+│        Return: {name, email}       │
+├─────────────────────────────────────┤
+│ Memory Buffer:                     │
+│ ┌──────────────────┐              │
+│ │ John | john@x.com │ ← Intended  │
+│ └──────────────────┘              │
+└─────────────────────────────────────┘
+Result: ✅ Only requested data returned
+
+
+MongoBleed Attack:
+┌─────────────────────────────────────────────┐
+│ Query: Crafted to read extra memory        │
+├─────────────────────────────────────────────┤
+│ Memory Buffer:                             │
+│ ┌─────────────────────────────────────────┐│
+│ │ John | john@x.com | pass123 | API_KEY   ││ ← Leak!
+│ │ alice@y.com | token456 | CardNum: 1234  ││ ← Leak!
+│ │ admin:secretpass | session_xyz          ││ ← Leak!
+│ └─────────────────────────────────────────┘│
+└─────────────────────────────────────────────┘
+Result: ⚠️ Sensitive data from memory leaked!
+```
+
