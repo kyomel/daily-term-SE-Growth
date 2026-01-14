@@ -469,3 +469,54 @@ MongoBleed Attack:
 Result: ⚠️ Sensitive data from memory leaked!
 ```
 
+---
+
+day - 14
+
+## C4 Model
+
+### Definition:
+
+The C4 Model is a "maps-of-your-code" approach to software architecture. Created by Simon Brown, it helps teams describe software architecture at different levels of abstraction, much like how you would use Google Maps to zoom from a continent down to a street view.
+
+Rather than using complex UML diagrams that often become outdated, C4 uses four hierarchical levels to make system designs easy to understand for both technical and non-technical stakeholders.
+
+**The 4 Levels of C4**
+
+1. Level 1: System Context Diagram
+This is the "big picture." It shows your software system as a single box in the center, surrounded by its users and the other systems it interacts with.
+
+- Audience: Everyone (Management, Business, Developers).
+- Focus: External dependencies and actors.
+
+2. Level 2: Container Diagram
+"Zooming in" to the system. A Container represents a high-level technical building block, such as a web application, a mobile app, a database, or a microservice.
+
+- Audience: Technical staff (Devs, Ops, Architects).
+- Focus: High-level technology choices and how containers communicate.
+
+3. Level 3: Component Diagram
+"Zooming in" to an individual container. It breaks a container down into its internal components (e.g., a "Security Manager," "Email Controller," or "Payment Gateway").
+
+- Audience: Developers and Architects.
+- Focus: Internal logical structure of a service.
+
+4. Level 4: Code Diagram
+The finest level of detail. This usually maps to UML Class Diagrams or entity-relationship diagrams.
+
+- Audience: Developers.
+- Focus: How the code is actually implemented. (Note: Often skipped or auto-generated as it changes too quickly).
+
+### Example:
+Internet Banking System:
+
+```
+| Level | Description |
+| :--- | :--- |
+| **Context** | A Personal Customer uses the Banking System to view balances. The system interacts with an external Mainframe Banking System and an Email Service. |
+| **Container** | Inside the Banking System, there is a Web App (React), a Mobile App (iOS/Android), an API Application (Java/Spring Boot), and a Database (PostgreSQL). |
+| **Component** | Inside the API Application, there is a Sign-in Controller, a Reset Password Component, and an Accounts Summary Component. |
+| **Code** | A Class Diagram showing how the Sign-in Controller uses the Security Framework classes. |
+```
+
+---
