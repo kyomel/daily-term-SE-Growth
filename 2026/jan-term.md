@@ -374,7 +374,9 @@ Key idea: "Black-box" testing that attacks your app while it's running to find s
 ✅ Works on any technology stack
 
 ### Example:
+
 Testing a Login Form
+
 ```
 Normal User:
 ┌─────────────────────────┐
@@ -441,6 +443,7 @@ Impact of MongoBleed:
 Severity: CRITICAL (CVSS Score: 9.8/10)
 
 ### Example:
+
 ```
 Normal MongoDB Query:
 ┌─────────────────────────────────────┐
@@ -484,30 +487,31 @@ Rather than using complex UML diagrams that often become outdated, C4 uses four 
 **The 4 Levels of C4**
 
 1. Level 1: System Context Diagram
-This is the "big picture." It shows your software system as a single box in the center, surrounded by its users and the other systems it interacts with.
+   This is the "big picture." It shows your software system as a single box in the center, surrounded by its users and the other systems it interacts with.
 
 - Audience: Everyone (Management, Business, Developers).
 - Focus: External dependencies and actors.
 
 2. Level 2: Container Diagram
-"Zooming in" to the system. A Container represents a high-level technical building block, such as a web application, a mobile app, a database, or a microservice.
+   "Zooming in" to the system. A Container represents a high-level technical building block, such as a web application, a mobile app, a database, or a microservice.
 
 - Audience: Technical staff (Devs, Ops, Architects).
 - Focus: High-level technology choices and how containers communicate.
 
 3. Level 3: Component Diagram
-"Zooming in" to an individual container. It breaks a container down into its internal components (e.g., a "Security Manager," "Email Controller," or "Payment Gateway").
+   "Zooming in" to an individual container. It breaks a container down into its internal components (e.g., a "Security Manager," "Email Controller," or "Payment Gateway").
 
 - Audience: Developers and Architects.
 - Focus: Internal logical structure of a service.
 
 4. Level 4: Code Diagram
-The finest level of detail. This usually maps to UML Class Diagrams or entity-relationship diagrams.
+   The finest level of detail. This usually maps to UML Class Diagrams or entity-relationship diagrams.
 
 - Audience: Developers.
 - Focus: How the code is actually implemented. (Note: Often skipped or auto-generated as it changes too quickly).
 
 ### Example:
+
 Internet Banking System:
 
 ```
@@ -529,7 +533,7 @@ day - 15
 
 SAFe (Scaled Agile Framework) 5.0 is a structured methodology for implementing Agile practices at enterprise scale. It provides a knowledge base of integrated principles, practices, and competencies for achieving business agility across large organizations with multiple teams working on complex projects.
 
-**Core Components:      **
+**Core Components: **
 
 - Team Level: Individual Agile teams (5-11 people) using Scrum/Kanban
 - Program Level: Agile Release Train (ART) - multiple teams working together
@@ -550,6 +554,7 @@ SAFe (Scaled Agile Framework) 5.0 is a structured methodology for implementing A
 ✓ Organize Around Value - Focus on customer outcomes
 
 ### Example:
+
 Banking Software Development
 
 ```
@@ -611,6 +616,7 @@ day - 19
 ## HyperLogLog
 
 ### Definition:
+
 HyperLogLog (HLL) is a probabilistic algorithm used to estimate the cardinality (number of unique elements) in a very large dataset using minimal memory. Instead of storing all unique values, it uses statistical approximations to count distinct items with ~2% error rate while using only kilobytes of memory instead of gigabytes.
 
 **Core Characteristics:**
@@ -637,6 +643,7 @@ Rare events (like many leading zeros) indicate a large dataset.
 - HyperLogLog uses this probability theory with hash values
 
 ### Example:
+
 Tracking Daily Unique Visitors
 
 ```
@@ -695,6 +702,7 @@ Passwordless Authentication is a security method that verifies user identity wit
 | Passkeys | WebAuthn cryptographic keys | Apple Passkeys, Google Authenticator |
 
 ### Example:
+
 Magic Link Login
 
 ```
@@ -725,7 +733,7 @@ High Performance Storage refers to storage systems designed to deliver extremely
 - Parallel processing - multiple operations occur simultaneously
 
 Technology Types
-Technology	Speed	Use Case	Cost
+Technology Speed Use Case Cost
 | Technology | Speed | Use Case | Cost |
 | :--- | :--- | :--- | :--- |
 | NVMe SSD | Extremely fast | Databases, real-time analytics | High |
@@ -735,6 +743,7 @@ Technology	Speed	Use Case	Cost
 | Parallel File Systems | Very fast | HPC, big data | High |
 
 ### Example:
+
 Video Streaming Platform
 
 ```
@@ -793,15 +802,16 @@ Holistic Engineering is an approach to software development that considers the e
 
 Traditional vs Holistic Engineering
 
-| Aspect	| Traditional Engineering	| Holistic Engineering |
-| :--- | :--- | :--- |
-| Focus	| "Does the code work?"	| "Does the solution work for everyone?" |
-| Scope	| Technical implementation	| Technical + Business + People + Environment |
-| Timeline	| Sprint/Release cycle	| Entire product lifecycle |
-| Success	| Feature shipped on time	| Value delivered sustainably |
-| Decisions	| Optimize for performance	| Optimize for total system health |
+| Aspect    | Traditional Engineering  | Holistic Engineering                        |
+| :-------- | :----------------------- | :------------------------------------------ |
+| Focus     | "Does the code work?"    | "Does the solution work for everyone?"      |
+| Scope     | Technical implementation | Technical + Business + People + Environment |
+| Timeline  | Sprint/Release cycle     | Entire product lifecycle                    |
+| Success   | Feature shipped on time  | Value delivered sustainably                 |
+| Decisions | Optimize for performance | Optimize for total system health            |
 
 ### Example:
+
 Building a Notification Feature
 
 ```
@@ -822,7 +832,7 @@ class NotificationService {
       this.metrics.increment('notifications.rate_limited');
       return { success: false, reason: 'rate_limit' };
     }
-    
+
     // Batch for efficiency
     await this.batchProcessor.add({
       userId,
@@ -830,21 +840,21 @@ class NotificationService {
       priority,
       scheduledFor: this.calculateOptimalTime(userId)
     });
-    
+
     this.metrics.increment('notifications.queued');
     return { success: true };
   }
-  
+
   calculateOptimalTime(userId) {
     // Don't notify during sleep hours in user's timezone
     const userTimezone = this.getUserTimezone(userId);
     const userLocalTime = moment().tz(userTimezone);
-    
+
     // If between 10PM - 8AM, schedule for 9AM
     if (userLocalTime.hour() >= 22 || userLocalTime.hour() < 8) {
       return userLocalTime.hour(9).minute(0);
     }
-    
+
     return moment(); // Send now
   }
 }
@@ -869,20 +879,20 @@ class NotificationPreferences {
       maxPerDay: 5
     };
   }
-  
+
   async respectUserPreferences(userId, notification) {
     const prefs = await this.getUserSettings(userId);
-    
+
     // User disabled notifications
     if (!prefs.enabled) return false;
-    
+
     // Category disabled
     if (!prefs.categories[notification.category]) return false;
-    
+
     // Exceeded daily limit
     const todayCount = await this.getTodayCount(userId);
     if (todayCount >= prefs.maxPerDay) return false;
-    
+
     return true;
   }
 }
@@ -897,7 +907,7 @@ class NotificationCostManager {
       serverCompute: this.calculateComputeCost(),
       bandwidth: this.calculateBandwidthCost()
     };
-    
+
     // Alert if costs spike unexpectedly
     if (estimatedCost.total > this.dailyBudget * 0.8) {
       await this.alertFinanceTeam({
@@ -906,15 +916,15 @@ class NotificationCostManager {
         reason: 'Approaching daily notification budget'
       });
     }
-    
+
     return estimatedCost;
   }
-  
+
   // ROI tracking
   async trackNotificationValue(notificationId) {
     // Did user engage after notification?
     const engagement = await this.analytics.getEngagement(notificationId);
-    
+
     return {
       cost: 0.0001,
       revenue: engagement.convertedValue || 0,
@@ -940,14 +950,14 @@ class NotificationMonitoring {
       }
     };
   }
-  
+
   async handleFailure(notification, error) {
     // Automatic retry with exponential backoff
     await this.retryQueue.add(notification, {
       maxRetries: 3,
       backoff: 'exponential'
     });
-    
+
     // Only alert if systemic issue
     if (this.isSystemicIssue(error)) {
       await this.pageOnCall(error);
@@ -968,33 +978,33 @@ class ScalableNotificationArchitecture {
       maxConcurrent: 1000,
       backpressure: true
     });
-    
+
     // Partition by user region for global scale
     this.partitionStrategy = 'by_region';
   }
-  
+
   async processNotifications() {
     // Process in batches to reduce API calls
     const batches = await this.queue.getBatches(100);
-    
+
     // Group by destination for efficiency
     const grouped = this.groupByProvider(batches);
-    
+
     // Send in parallel with circuit breaker
     await Promise.all(
-      grouped.map(group => 
+      grouped.map(group =>
         this.sendWithCircuitBreaker(group)
       )
     );
   }
-  
+
   async sendWithCircuitBreaker(batch) {
     // Prevent cascading failures
     if (this.circuitBreaker.isOpen()) {
       await this.deadLetterQueue.add(batch);
       return;
     }
-    
+
     try {
       await this.pushProvider.sendBatch(batch);
       this.circuitBreaker.recordSuccess();
@@ -1016,13 +1026,13 @@ class PrivacyCompliantNotifications {
       await this.logComplianceEvent('notification_blocked_no_consent', userId);
       return false;
     }
-    
+
     // Don't include sensitive data in notification
     const sanitizedMessage = this.sanitizeForNotification(message);
-    
+
     // Encrypt notification payload
     const encrypted = await this.encrypt(sanitizedMessage);
-    
+
     // Audit trail for compliance
     await this.auditLog.record({
       action: 'notification_sent',
@@ -1030,10 +1040,10 @@ class PrivacyCompliantNotifications {
       timestamp: Date.now(),
       legalBasis: 'consent'
     });
-    
+
     return await this.send(encrypted);
   }
-  
+
   sanitizeForNotification(message) {
     // Remove PII from preview
     return {
@@ -1058,12 +1068,13 @@ The Open-Closed Principle is one of the five SOLID principles of object-oriented
 "Software entities (classes, modules, functions) should be OPEN for extension but CLOSED for modification."
 
 In Simple Terms:
+
 - OPEN for Extension: You can add new functionality
 - CLOSED for Modification: You shouldn't change existing, tested code
 
 The Goal: Add new features without breaking existing code that already works.
 
-***Why It Matters***
+**_Why It Matters_**
 
 ❌ Without OCP:
 Every new feature → Modify existing code → Risk breaking things → More bugs
@@ -1093,7 +1104,7 @@ class CreditCardPayment extends PaymentMethod {
     this.chargeCreditCard(amount);
     this.sendReceipt();
   }
-  
+
   validateCard() { /* ... */ }
   chargeCreditCard(amount) { /* ... */ }
   sendReceipt() { /* ... */ }
@@ -1106,7 +1117,7 @@ class PayPalPayment extends PaymentMethod {
     this.authenticatePayPal();
     this.chargePayPal(amount);
   }
-  
+
   authenticatePayPal() { /* ... */ }
   chargePayPal(amount) { /* ... */ }
 }
@@ -1118,7 +1129,7 @@ class BitcoinPayment extends PaymentMethod {
     this.generateWalletAddress();
     this.waitForConfirmation(amount);
   }
-  
+
   generateWalletAddress() { /* ... */ }
   waitForConfirmation(amount) { /* ... */ }
 }
@@ -1128,20 +1139,20 @@ class PaymentProcessor {
   constructor() {
     this.paymentMethods = new Map();
   }
-  
+
   // Register new payment methods (EXTENSION POINT)
   registerPaymentMethod(name, paymentMethod) {
     this.paymentMethods.set(name, paymentMethod);
   }
-  
+
   // Process payment using registered method
   processPayment(amount, paymentType) {
     const paymentMethod = this.paymentMethods.get(paymentType);
-    
+
     if (!paymentMethod) {
       throw new Error(`Payment method '${paymentType}' not registered`);
     }
-    
+
     paymentMethod.process(amount);
   }
 }
@@ -1158,6 +1169,106 @@ processor.registerPaymentMethod('bitcoin', new BitcoinPayment());
 processor.processPayment(100, 'credit_card');
 processor.processPayment(50, 'paypal');
 processor.processPayment(0.002, 'bitcoin');
+```
+
+---
+
+day - 26
+
+## Socket Saturation
+
+### Definition:
+
+Socket Saturation occurs when a CPU socket (the physical slot on a motherboard where a processor plugs in) reaches its maximum capacity for handling data, computation, or I/O operations. The socket becomes a bottleneck, preventing further performance improvements even if individual cores aren't fully utilized.
+
+Think of it like a highway: even if individual lanes (cores) have capacity, the tollbooth (socket) can only handle so many cars per minute.
+
+**Key Concepts**
+| Component | What It Means | Saturation Point |
+|-----------|---------------|------------------|
+| CPU Socket | Physical connector + associated controllers | When memory/PCIe/I-O bandwidth maxed out |
+| Memory Channels | Data pathways between CPU and RAM | All channels running at capacity |
+| PCIe Lanes | Connections to GPUs, storage, network cards | All lanes fully utilized |
+| QPI/UPI Links | Inter-socket communication (multi-socket systems) | Links saturated with cross-socket traffic |
+
+**What Gets Saturated?**
+
+```
+┌─────────────────────────────────────────────┐
+│         CPU Socket (e.g., Intel Xeon)       │
+├─────────────────────────────────────────────┤
+│                                             │
+│  ┌────────┐  ┌────────┐  ┌────────┐       │
+│  │ Core 0 │  │ Core 1 │  │ Core N │       │
+│  └────────┘  └────────┘  └────────┘       │
+│       │          │           │             │
+│       └──────────┴───────────┘             │
+│                  │                         │
+│         ┌────────▼────────┐                │
+│         │  Shared Cache   │                │
+│         └────────┬────────┘                │
+│                  │                         │
+│         ┌────────▼────────┐                │
+│         │ Memory Controller│ ◄─── Can saturate!
+│         └────────┬────────┘                │
+│                  │                         │
+│         ┌────────▼────────┐                │
+│         │  PCIe Controller│ ◄─── Can saturate!
+│         └────────┬────────┘                │
+└──────────────────┼─────────────────────────┘
+                   │
+          Bottleneck Zone! 🚨
+```
+
+### Example:
+
+Database Server Overload
+Scenario: E-Commerce Database on Black Friday
+
+```
+System Specs
+
+Server: Dell PowerEdge R740
+CPU: 2x Intel Xeon Gold 6140 (18 cores each, 36 cores total)
+RAM: 384GB DDR4 (6 channels per socket)
+Storage: 8x NVMe SSDs
+Network: 2x 25Gb NICs
+Normal Operation (Wednesday)
+
+Socket 1 Utilization:
+├─ CPU Cores: 30% average
+├─ Memory Bandwidth: 45 GB/s (out of 120 GB/s max)
+├─ PCIe Bandwidth: 20 GB/s (out of 64 GB/s max)
+└─ Status: ✅ Healthy headroom
+Black Friday 12:00 PM (SOCKET SATURATION!)
+
+Socket 1 Utilization:
+├─ CPU Cores: 65% average (still have capacity!)
+├─ Memory Bandwidth: 118 GB/s ⚠️ (98% of max)
+├─ PCIe Bandwidth: 62 GB/s ⚠️ (97% of max)
+└─ Status: 🔴 SATURATED - Adding more cores won't help!
+
+Symptoms:
+- Query latency spikes from 5ms → 200ms
+- Cores waiting on memory/storage
+- CPU usage appears "low" but performance degraded
+Why It Happens
+
+# The problem
+
+# 1 million queries/second trying to:
+for query in queries:
+    # Read from database (needs memory bandwidth)
+    data = read_from_memory(large_dataset)  # ← Bottleneck!
+
+    # Write to NVMe (needs PCIe bandwidth)
+    write_to_nvme(results)  # ← Bottleneck!
+
+    # Send to network card (needs PCIe bandwidth)
+    send_to_client(response)  # ← Bottleneck!
+
+# Cores finish computation quickly but spend time
+# WAITING for data movement through the socket
 ```
 
 ---
