@@ -1305,3 +1305,56 @@ Compliance report auto-generated for audit trail ✅
 ```
 
 ---
+
+day - 23
+
+## Forward Deployed Engineer(FDE)
+
+### Definition:
+
+A Forward Deployed Engineer (FDE) is a highly technical software engineer embedded directly with customers — working on-site or closely alongside a client's team to solve complex, real-world problems using the company's product — sitting at the intersection of engineering, consulting, and sales to deliver working solutions, not just advice.
+
+An FDE is not a salesperson who understands technology, nor a support engineer who fixes bugs — they are a full engineer who happens to work inside the customer's world, building real things that make the product indispensable to that customer.
+
+The Term's Origin
+The term "Forward Deployed" comes from military terminology — referring to troops stationed close to the front lines rather than safely behind headquarters. Applied to engineering:
+
+| Traditional Engineer         | Forward Deployed Engineer             |
+| ---------------------------- | ------------------------------------- |
+| Headquartered at company     | Embedded at customer site             |
+| Builds for general users     | Builds for THIS customer's needs      |
+| Works from requirements docs | Works from real-world problems        |
+| Separated from end users     | Sits next to end users daily          |
+| Measures success by features | Measures success by customer outcomes |
+
+Popularized heavily by Palantir Technologies, which built its entire early growth model around FDEs embedded at government agencies, banks, and large enterprises. palantir.com
+
+### Example:
+
+FDE at a Data Analytics Company
+Imagine DataFlow Inc. sells a data analytics platform. A major bank (MegaBank) signs a $2M contract but is struggling to get value from it after 3 months.
+
+```
+Common backgrounds:
+  → Software engineer who enjoys customer interaction
+  → Solutions engineer who wants to write more real code
+  → Consultant who wants to work with a single product deeply
+
+Compensation (typically):
+  → Base salary: Senior SWE level (not reduced for "sales" role)
+  → Variable: Tied to customer outcomes / expansion revenue
+  → Often higher OTE than pure engineering roles
+
+Career paths after FDE:
+  ┌─────────────────────────────────────────────┐
+  │              FDE Experience                  │
+  └──────────┬──────────────┬───────────────────┘
+             │              │              │
+             ▼              ▼              ▼
+      Product Manager  Engineering     Solutions
+      (deep customer   Lead/Architect  Engineering
+       empathy)        (real-world     Director
+                        patterns)
+```
+
+---
