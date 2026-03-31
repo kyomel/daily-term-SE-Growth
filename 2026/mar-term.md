@@ -1894,3 +1894,241 @@ kubectl get certificate api-tls-cert -n production
 
 ---
 
+day - 30
+
+## WebTransport Protocol 
+
+### Definition:
+
+WebTransport is a modern web protocol that provides low-latency, bidirectional communication between browsers and servers over HTTP/3 (QUIC). It combines the best features of WebSockets (real-time bidirectional messaging) and WebRTC (fast, unreliable data channels) while solving their limitations. WebTransport supports both reliable streams (like TCP) and unreliable datagrams (like UDP) in a single connection.
+
+Simple analogy:
+
+WebSockets = Phone call (reliable, but if connection drops, you lose everything)
+WebRTC = Walkie-talkie (fast but complex setup, peer-to-peer only)
+WebTransport = Modern smartphone app (reliable when needed, fast when wanted, easy server communication)
+
+Why WebTransport Exists
+The Problem with Current Technologies
+
+┌────────────────────────────────────────────────────┐
+│  Traditional Web Real-Time Communication          │
+└────────────────────────────────────────────────────┘
+
+WebSockets (2011)
+├─ Protocol: TCP-based (HTTP/1.1 upgrade)
+├─ Reliability: Always reliable (every packet guaranteed)
+├─ Latency: Higher (TCP head-of-line blocking)
+├─ Use case: Chat, notifications
+│
+❌ Problems:
+├─ Single stream = one slow packet blocks everything
+├─ No way to send "lossy" data (like video frames)
+├─ Can't prioritize urgent messages
+└─ TCP handshake adds latency
+
+Example Problem:
+┌──────────────────────────────────────┐
+│ Video Chat + Text Chat over WebSocket│
+└──────────────────────────────────────┘
+  Packet 1: Video frame 🎥 (important)
+  Packet 2: Video frame 🎥 (important)
+  Packet 3: Text message 💬 (urgent!)
+  Packet 4: Lost video frame ❌
+  
+  Result: Packets 1, 2, 3 wait for 4 to be retransmitted
+  → Text message delayed by video buffering!
+
+───────────────────────────────────────────────────────
+
+WebRTC Data Channels (2012)
+├─ Protocol: SCTP over DTLS/UDP
+├─ Reliability: Configurable (reliable or unreliable)
+├─ Latency: Low (UDP-based)
+├─ Use case: Gaming, video conferencing
+│
+❌ Problems:
+├─ Complex setup (STUN, TURN servers)
+├─ Primarily peer-to-peer (browser-to-browser)
+├─ Difficult for client-server architectures
+├─ NAT traversal issues
+└─ Large overhead for simple use cases
+
+Example Problem:
+┌──────────────────────────────────────┐
+│ Simple multiplayer game              │
+└──────────────────────────────────────┘
+  Need: Fast server → client updates
+  Reality: Must set up STUN/TURN, complex signaling
+  → 500+ lines of boilerplate code
+
+───────────────────────────────────────────────────────
+
+WebTransport (2021+)
+├─ Protocol: HTTP/3 (QUIC) or HTTP/2
+├─ Reliability: Both reliable + unreliable modes
+├─ Latency: Low (no head-of-line blocking)
+├─ Use case: Everything!
+│
+✅ Solutions:
+├─ Multiple independent streams (no blocking)
+├─ Unreliable datagrams for time-sensitive data
+├─ Reliable streams for critical data
+├─ Simple client-server model (like WebSockets)
+├─ Built on HTTP/3 (modern, fast)
+└─ No NAT traversal complexity
+
+Example Solution:
+┌──────────────────────────────────────┐
+│ Video Chat + Text Chat over WebTransport│
+└──────────────────────────────────────┘
+  Stream 1: Text messages (reliable)
+  Stream 2: Video frames (unreliable datagrams)
+  
+  Lost video frame? → Skip it, send next frame
+  Text message? → Always delivered in order
+  → No interference between streams! ✅
+
+### Example:
+
+Real-Time Racing Game
+Game Requirements
+
+"TurboRace" - Browser-based racing game
+├─ 60 FPS gameplay
+├─ Player positions updated 20 times/second
+├─ Chat messages (must be reliable)
+├─ Game state sync (reliable)
+└─ Player inputs (can drop old inputs)
+
+```
+Performance Comparison
+
+Test: 100 players, 20 position updates/second
+
+WebSocket (Baseline):
+├─ Protocol: TCP (reliable)
+├─ Bandwidth: ~800 KB/s
+├─ Latency: 50-100ms (head-of-line blocking)
+├─ Dropped packets: Retransmitted (increases latency)
+└─ Result: Choppy gameplay, lag spikes
+
+WebRTC Data Channels:
+├─ Protocol: SCTP over UDP
+├─ Bandwidth: ~500 KB/s
+├─ Latency: 20-40ms
+├─ Dropped packets: Ignored (unreliable mode)
+├─ Setup: Complex (STUN/TURN)
+└─ Result: Good performance, but complex
+
+WebTransport:
+├─ Protocol: HTTP/3 (QUIC)
+├─ Bandwidth: ~400 KB/s (efficient multiplexing)
+├─ Latency: 15-30ms
+├─ Dropped packets: Ignored (datagrams) / Retransmitted (streams)
+├─ Setup: Simple (like WebSocket)
+└─ Result: Best performance + simplicity ✅
+
+Key Advantage:
+Position updates (datagrams): Lost frames don't block future frames
+Chat messages (streams): Guaranteed delivery, independent of positions
+→ No interference between data types!
+```
+
+---
+
+day - 31
+
+## Infrastructure For Agency
+
+### Definition:
+
+Infrastructure for Agency is a concept coined by Matthew Skelton and Manuel Pais — co-authors of Team Topologies — and articulated by AI Product Advisor Stuart Winter-Tear — that describes the rules, principles, guardrails, and organizational structures that empower groups of humans AND AI agents to act autonomously, make decisions, and deliver value within clearly defined boundaries — without needing constant supervision or centralized control.
+
+"Infrastructure for Agency: rules, principles, guardrails that empower groups of humans and AI Agents to be effective stewards of value flow."
+— Matthew Skelton, QCon London 2026
+
+"Team Topologies offers something Agentic AI desperately needs — but cannot invent on its own: Clear boundaries, Stable interfaces, Aligned domains, A culture of collaborative ownership. Team Topologies is the infrastructure for agency itself."
+— Stuart Winter-Tear, AI Product Advisor
+
+— teamtopologies.com
+
+### Example:
+
+E-Commerce Company Adopting AI Agents
+A retail company deploys AI agents across their engineering organization. Two approaches — one without Infrastructure for Agency, one with.
+
+```
+Company applies Team Topologies as Infrastructure for Agency:
+
+Step 1: Define bounded stream-aligned teams (human + AI):
+
+  ┌─────────────────────────────────────────────────────┐
+  │  Returns & Refunds Team                             │
+  │  Humans: 4 engineers  AI agents: 2                 │
+  │                                                     │
+  │  Owns ONLY:                                         │
+  │    → Return requests                                │
+  │    → Refund calculations                            │
+  │    → Return shipping labels                         │
+  │                                                     │
+  │  AI agent context:                                  │
+  │    → Return policy rules                            │
+  │    → Customer order history (scoped read)           │
+  │    → Refund API (scoped write)                      │
+  │    → NOTHING ELSE                                   │
+  └─────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────┐
+  │  Customer Communications Team                       │
+  │  Humans: 3 engineers  AI agents: 1                 │
+  │                                                     │
+  │  Owns ONLY:                                         │
+  │    → Email/SMS templates                            │
+  │    → Communication scheduling                       │
+  │    → Delivery status messages                       │
+  │                                                     │
+  │  AI agent context:                                  │
+  │    → Communication templates                        │
+  │    → Order status (scoped read)                     │
+  │    → Email/SMS send API (scoped write)              │
+  │    → NOTHING ELSE                                   │
+  └─────────────────────────────────────────────────────┘
+
+Step 2: Platform team provides scoped capabilities
+  (vending machine model):
+
+  Platform exposes to Returns team:
+    GET /orders/{id}/items    ← scoped read ✅
+    POST /refunds             ← scoped write ✅
+    GET /return-policies      ← read only ✅
+
+  Platform BLOCKS from Returns team:
+    GET /customers/payment-methods  ← not needed ❌
+    GET /customers/hr-data          ← not their domain ❌
+    GET /finance/reports            ← not their domain ❌
+
+Step 3: What the agent actually does now:
+
+  Agent tasked: "Process customer return for Order #5521"
+                     │
+                     ▼
+  Calls: GET /orders/5521/items         ✅ (within scope)
+  Calls: GET /return-policies           ✅ (within scope)
+  Calculates refund amount              ✅ (within scope)
+  Calls: POST /refunds { amount: $49 }  ✅ (within scope)
+  Hands off to Communications team:
+    "Trigger return confirmation email" ✅ (stable interface)
+                     │
+                     ▼
+  Result:
+    ✅ Refund processed in 8 seconds
+    ✅ Full audit log of every API call
+    ✅ CISO can reason about what AI accessed
+    ✅ No GDPR violations — agent only touched what it should
+    ✅ COO sleeps at night — bounded, observable, trustworthy
+```
+
+---
+
+
