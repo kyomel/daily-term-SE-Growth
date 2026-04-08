@@ -309,3 +309,86 @@ A streaming platform hosts a massive live concert — expecting 10x normal traff
 ```
 
 ---
+
+day - 8
+
+## GeoDNS
+
+### Definition:
+
+GeoDNS (Geographic Domain Name System) is a DNS-based traffic routing technique that returns different IP addresses in response to DNS queries based on the geographic location of the requester — directing users to the nearest, fastest, or most appropriate server automatically, without any change to the user's browser, application, or behavior.
+
+GeoDNS turns the DNS lookup — the first step every internet connection makes — into an intelligent traffic router that silently directs each user to the optimal server for their location, the moment they type a URL.
+
+Background — Why GeoDNS Exists
+The internet is global. Servers are not everywhere. Physics is unavoidable:
+
+
+The Latency Problem — without GeoDNS:
+
+  One server in New York serves the entire world:
+
+  User in New York    → 8ms latency    ✅ fast
+  User in London      → 95ms latency   ⚠️ acceptable
+  User in Mumbai      → 220ms latency  ❌ slow
+  User in Tokyo       → 190ms latency  ❌ slow
+  User in São Paulo   → 160ms latency  ❌ slow
+  User in Sydney      → 240ms latency  ❌ very slow
+
+  Every DNS query for "api.example.com"
+  returns the SAME IP: 203.0.113.10 (New York)
+  regardless of where the user is located
+
+  Impact:
+    ❌ 80% of global users experience poor performance
+    ❌ Single point of failure — NY goes down = world goes down
+    ❌ All global traffic crosses the Atlantic/Pacific
+    ❌ Bandwidth costs are enormous on one datacenter
+    ❌ Compliance issues — EU data must stay in EU
+
+  With GeoDNS:
+    User in New York  → 203.0.113.10 (New York)    8ms  ✅
+    User in London    → 185.12.45.22 (Frankfurt)   18ms ✅
+    User in Mumbai    → 103.45.67.89 (Singapore)   28ms ✅
+    User in Tokyo     → 210.32.45.11 (Tokyo)        5ms ✅
+    User in São Paulo → 177.88.32.45 (São Paulo)   12ms ✅
+    User in Sydney    → 202.45.67.88 (Sydney)       9ms ✅
+
+  Each user automatically routed to nearest server
+  Zero configuration change on the user side
+
+### Example:
+
+Global E-Commerce Platform
+An e-commerce company sells worldwide and uses GeoDNS to ensure every shopper gets fast, compliant, locally relevant service.
+
+```
+E-Commerce Platform — 3-month comparison:
+
+                        Before GeoDNS    After GeoDNS    Change
+                        ─────────────    ────────────    ──────
+Global avg latency:     185ms            18ms           ↓ 90% ✅
+Asia-Pacific latency:   230ms            12ms           ↓ 95% ✅
+Europe latency:         95ms             15ms           ↓ 84% ✅
+South America latency:  165ms            11ms           ↓ 93% ✅
+
+Page load time (global  4.8 seconds      1.1 seconds    ↓ 77% ✅
+  avg, including assets)
+
+Conversion rate:        2.1%             3.4%           ↑ 62% ✅
+  (faster = more sales — 100ms latency ≈ 1% conversion drop)
+
+Uptime (global):        99.2%            99.97%         ✅
+  (single datacenter vs regional failover)
+
+GDPR compliance:        Manual process   Automatic ✅
+  EU data in EU:        (risky)          (enforced by routing)
+
+Bandwidth costs:        $48,000/mo       $31,000/mo     ↓ 35% ✅
+  (regional servers — shorter data paths, cheaper egress)
+
+Customer complaints     847/month        94/month       ↓ 89% ✅
+  about slowness:
+```
+
+---
