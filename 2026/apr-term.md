@@ -1671,3 +1671,219 @@ Full cost comparison at 50 TB/month video SaaS workload:
 ```
 
 ---
+
+day - 27 
+
+## Frontier Agents
+
+### Definition:
+
+Frontier Agents are the third level in the five-tier hierarchy of AI agent autonomy — autonomous AI systems that go decisively beyond standard task-executing agents by incorporating self-awareness, persistent memory, real-time self-evaluation, and the ability to dynamically create new tools or spawn specialized sub-agents at runtime — operating through continuous cycles of thinking, planning, acting, and reflecting to accomplish complex, multi-step goals over hours or days without human intervention — while critically distinguishing themselves from simpler agents by their capacity to observe their own execution, detect when their knowledge has gaps, recognize when their tools have changed, and restructure their own workflows on the fly when current approaches are failing.
+
+A Frontier Agent is not simply an AI that executes tasks — it is an AI that watches itself execute tasks, knows when it is drifting from the goal, identifies what capabilities it is missing, and evolves its own approach mid-run without being told to. The gap between a standard agent and a Frontier Agent is the gap between a worker who follows instructions and a worker who notices when the instructions are wrong and fixes the plan themselves.
+
+Background — Why Frontier Agents Exist
+
+The Problem With Standard Agents — The Awareness Gap:
+
+  Standard Agent (Level 2) workflow:
+    Receive goal
+        │
+        ▼
+    Execute steps with fixed toolset
+        │
+        ▼
+    Complete OR fail OR loop forever
+        │
+        ▼
+    Return result (or get stuck)
+
+  What standard agents CANNOT do:
+    ❌ Notice their tools have changed mid-execution
+    ❌ Detect when they have drifted from the original goal
+    ❌ Recognize knowledge gaps in real time
+    ❌ Know whether progress is real or illusory
+    ❌ Restructure their own approach when failing
+    ❌ Create new tools they don't already have
+    ❌ Ask: "Am I actually done, or do I just think I am?"
+
+  The "Dementia Problem" — coined by Steve Yegge:
+    Agent tracks work in markdown files
+    Ends up with hundreds of decaying plans
+    Declares project COMPLETE when 50% done ❌
+    "TODO: fix auth (blocked on ticket 3)"
+    → Agent cannot ask: "What can I work on RIGHT NOW?"
+    → Requires a human to interpret its own notes
+
+  The core failure:
+    "Today's AI agents can reason, plan, and execute.
+     What they CAN'T do is WATCH THEMSELVES WORK."
+     — DZone, April 2026
+
+  Frontier Agent solution:
+    Add self-awareness as a first-class capability
+    Add continuous evaluation during execution (not just at end)
+    Add dynamic tool creation when gaps are detected
+    Add embedded learning from failures, not just successes
+    Add coordinated shared state in multi-agent settings ✅
+
+### Example:
+
+A Frontier Agent Autonomously Ships a Feature
+A software engineering team uses a Frontier Agent to implement a complete authentication feature — from specification to deployment — autonomously over several hours.
+
+```
+How major organizations deploy Frontier Agents today:
+
+  AWS FRONTIER AGENTS (GA — 2026):
+  ─────────────────────────────────────────────────────────
+  AWS Security Agent:
+    Task: Proactive security throughout development lifecycle
+    Autonomy: Context-aware penetration testing on demand
+    Self-evolution: Adapts tests to your specific codebase
+    Result: "Reduced testing duration by more than 90%"
+            — Muhammad Furqan Habibi, HENNGE K.K
+
+  AWS DevOps Agent:
+    Task: Resolve AND proactively prevent incidents
+    Autonomy: Operates across AWS, multicloud, on-prem
+    Self-awareness: Integrates with Splunk for cross-env logs
+    Result: Always-available operations teammate
+            "Analyze logs across diverse environments"
+            — Aravind Manchireddy, T-Mobile SVP
+
+  Kiro Autonomous Agent:
+    Task: Full software development lifecycle
+    Autonomy: Generates user stories, acceptance criteria,
+              architecture diagrams before code is written
+    Self-evolution: Maintains context across sessions
+    Result: "Asynchronous orchestration of project workloads
+             is a game-changer" — Benjamin Rowe, NVISIONx CTO
+
+  OPENAI FRONTIER (launched February 2026):
+  ─────────────────────────────────────────────────────────
+  Platform for enterprise Frontier Agent deployment
+  Early adopters: HP, Intuit, Oracle, State Farm, Uber
+
+  Real outcomes:
+    Major manufacturer:
+      Production optimization: 6 weeks → 1 day ✅
+    Global investment company:
+      Deployed agents across entire sales process
+      90%+ more time for salespeople with customers ✅
+    Large energy producer:
+      Output increased up to 5%
+      = $1B+ in additional revenue ✅
+    Hardware manufacturer (debugging):
+      Root cause identification: ~4 hours → minutes ✅
+      Saving thousands of engineering hours annually ✅
+
+  MICROSOFT FRONTIER AGENTS (Microsoft 365 Copilot):
+  ─────────────────────────────────────────────────────────
+  Researcher Agent:
+    → Accepts question
+    → Searches emails, docs, calendar, business systems
+    → Synthesizes answer from heterogeneous sources
+    → Delivers comprehensive, sourced response
+
+  Analyst Agent:
+    → Examines data from multiple sources
+    → Identifies patterns and themes across data
+    → Does not answer one question — reveals what matters
+
+  All within existing Microsoft 365 security framework:
+    → Inherits established security policies
+    → Entra ID identity controls
+    → Data residency requirements
+    → Compliance obligations
+    → No separate governance infrastructure needed ✅
+```
+
+---
+
+day - 28
+
+## Client ID Metadata Documents (CIMD)
+
+### Definition:
+
+Client ID Metadata Documents (CIMD) is an OAuth 2.0 identity mechanism — currently an IETF Internet-Draft (draft-ietf-oauth-client-id-metadata-document-01, by Aaron Parecki and Emelia Smith, adopted by the IETF OAuth Working Group in October 2025) — that fundamentally replaces pre-registration as the way OAuth clients identify themselves to authorization servers, by making the client_id itself a publicly-hosted HTTPS URL that resolves to a small, self-published JSON document containing the client's name, redirect URIs, grant types, and other metadata — so that any authorization server, anywhere, that has never seen this client before, can fetch that URL on demand and proceed directly into an OAuth flow without any prior registration, database entry, or coordination, anchoring trust not in a central registry but in DNS and TLS domain ownership — the same foundational trust mechanism the web has relied on for decades.
+
+CIMD does not add a smarter registration system on top of OAuth — it eliminates the registration step entirely. Instead of an authorization server knowing about a client because someone filled out a form in a developer portal, it knows about a client because it can read a JSON file the client controls at its own domain. The trust comes not from a central authority saying "we know this client" — it comes from the fact that only the legitimate owner of my-agent.example.com can control what is served at that URL.
+
+Background — Why CIMD Exists
+
+The Core Problem: OAuth Client Identity at Scale
+
+  Traditional OAuth requires clients to be KNOWN
+  before they can participate in any flow:
+
+  Old model:
+    Client developer → logs into developer portal
+                     → fills out registration form
+                     → receives: client_id = "abc123xyz"
+    Authorization server stores:
+      client_id:     "abc123xyz"
+      client_name:   "My App"
+      redirect_uris: ["https://myapp.com/callback"]
+
+    Every future auth request:
+      client presents "abc123xyz"
+      server looks up its own database
+      finds the record → proceeds ✅
+
+  This works when:
+    ✅ You have ONE auth server (Google, GitHub)
+    ✅ A human developer can fill out a form
+    ✅ The ecosystem is small and controlled
+
+  This FAILS completely when:
+    ❌ An AI agent needs to connect to 100+ MCP servers
+       each with a different authorization server
+    ❌ A CLI tool needs OAuth without human setup
+    ❌ An open federated ecosystem has thousands of clients
+    ❌ No human is available to perform manual registration
+
+### Example:
+
+An AI Agent Connecting to Multiple MCP Servers
+An AI coding agent needs to authenticate against dozens of different MCP servers — each with a different authorization server — without any pre-registration anywhere.
+
+```
+At scale: AI agent connecting to 100 MCP servers
+
+                  Pre-Registration  DCR (RFC 7591)   CIMD
+                  ────────────────────────────────────────────
+Setup per server: Manual form       POST /register   NONE ✅
+                  ❌ (impossible     (automated but
+                  at scale)          creates problems)
+
+Client_id per     Different per     Different per    ONE URL
+auth server:      server ❌          server ❌         everywhere ✅
+
+DB records        100 entries per   100 entries per  0 entries
+created:          auth server ❌     auth server ❌    anywhere ✅
+
+DoS surface:      None              Public write     None ✅
+                                    endpoint ❌
+
+Identity          By central        None — claimed   By DNS/TLS
+verification:     registry          identity ❌       domain owner ✅
+
+Client record     Manual deletion   No standard      N/A — no
+cleanup:          required ❌        lifecycle ❌      records ✅
+
+Scale to          ❌ Impossible      ⚠️ Operational   ✅ Works
+100+ servers:                       chaos             natively
+
+Enterprise        ✅ Works in       ❌ Barrier to     ✅ Preferred
+adoption:         controlled env    adoption          default
+
+Identity          Centralized       Centralized       Decentralized
+trust model:      (auth server DB)  (auth server DB)  (DNS + TLS) ✅
+
+Works without     ❌ Always needs   ❌ Needs runtime  ✅ Zero
+prior contact:    pre-arrangement   POST handshake    prior contact ✅
+```
+
+---
