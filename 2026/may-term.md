@@ -461,3 +461,102 @@ The alarm only sounds when both conditions are true—someone opened the door an
 ```
 
 ---
+
+day - 15
+
+## Zombie API
+
+### Definition:
+
+A Zombie API is an endpoint or service that remains exposed and operational long after its intended lifespan—often forgotten, undocumented, and unowned—yet continues to respond to traffic. It is neither properly alive (actively maintained, monitored, or documented) nor properly dead (fully decommissioned). Like actual zombies, these APIs wander the infrastructure unnoticed until they create serious problems.
+
+Analogy: Imagine an employee who left the company five years ago, but their keycard was never deactivated. The badge still opens a back door that no security guard patrols. One day, someone finds it and walks right in.
+
+The Anatomy of a Zombie
+Healthy API	Zombie API
+Actively maintained and versioned.	Running on an old host or path everyone forgot.
+Documented in the developer portal.	Exists only in a legacy config file or load-balancer rule.
+Monitored by security tools and dashboards.	Generates no alerts; traffic is invisible to current teams.
+Follows current security policies.	Uses outdated auth, weak encryption, or over-permissive scopes.
+
+### Example:
+
+FlashCart" E-Commerce
+
+```
+In 2022, the engineering team at FlashCart rushes out a Black Friday promotion. A contractor spins up a temporary tax-calculation endpoint:
+
+
+POST /legacy/v1/checkout/calculate-tax
+It runs in an isolated container, has no rate limiting, and returns raw customer addresses alongside tax amounts. It gets the company through the holiday.
+
+2023: The company rebuilds checkout on a new platform. The official docs point everyone to /api/v2/tax, and the team assumes the old path was shut down. But the original container was never deleted; it was just disconnected from the main load balancer and left running in a staging subnet that still has a public route.
+
+2025: No current engineer knows calculate-tax exists. It is not in the API catalog, not covered by the quarterly penetration tests, and not routed through the modern Web Application Firewall.
+
+Then an attacker scans the domain, discovers the forgotten path, and finds that:
+
+It still accepts the company’s old API key format (no longer rotated).
+It returns full customer addresses without the new masking rules.
+It has zero logging, so requests go completely unseen.
+The attacker exfiltrates data through a doorway the company didn’t know was still open. The Zombie API has bitten the organization.
+
+Why They Matter
+Invisible Attack Surface: Security teams cannot protect what they do not know exists.
+Compliance Drift: A forgotten endpoint may bypass GDPR deletion rules or PCI logging requirements.
+Cost Bloat: Unused containers, IP addresses, and load-balancer rules still incur cloud spend.
+```
+
+---
+
+day - 18
+
+## MTBF and MTTR
+
+### Definition:
+
+MTBF — Mean Time Between Failures
+The average time a system runs correctly before its next failure.
+It measures reliability. A higher MTBF means the system breaks less often.
+
+MTTR — Mean Time To Repair / Recover
+The average time needed to diagnose a failure and restore full service.
+It measures resilience. A lower MTTR means the system heals faster.
+
+### Example:
+
+The Coffee Shop Espresso Machine
+You run a café and track your primary espresso machine for one year.
+
+```
+Incident	Date	Downtime
+Pump seal blows	Feb 1	4 hours
+Grinder motor fails	Jun 1	2 hours
+Heating element cracks	Nov 1	2 hours
+MTBF (How reliable is it?)
+The intervals between failures are ~120 days and ~150 days.
+MTBF= 
+2
+120+150
+​
+ ≈135 days
+Meaning: You can count on roughly 4.5 months of uninterrupted service between breakdowns.
+
+MTTR (How fast do we recover?)
+The repair durations are 4, 2, and 2 hours.
+MTTR= 
+3
+4+2+2
+​
+ ≈2.67 hours
+Meaning: When the machine does die, your technician gets it running again in under 3 hours on average.
+
+The Key Takeaway
+Question	Metric	Goal
+How often do things break?	MTBF	Higher (fewer incidents)
+How fast do we fix them?	MTTR	Lower (faster recovery)
+In software, teams often focus only on preventing crashes (MTBF), but world-class SRE teams also drive MTTR down through automated rollbacks, feature flags, and redundancy—because every system eventually fails, and what matters is how little your users notice.
+```
+
+---
+
