@@ -828,3 +828,38 @@ TIMESTAMP AS OF '2025-05-20 10:00:00';
 ```
 
 ---
+
+day - 26
+
+## MDASH
+
+### Definition:
+
+MDASH is Microsoft's new AI-powered vulnerability-finding system that uses 100+ specialized AI agents working together (not just one model) to scan source code, debate whether a bug is real, and even prove it's exploitable — all before a human ever looks at it.
+
+Think of it as a team of AI security auditors, not just a single scanner:
+
+
+MDASH Pipeline (5 stages):
+┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│ PREPARE  │ →  │   SCAN   │ →  │ VALIDATE │ →  │  DEDUP   │ →  │  PROVE   │
+│ Maps the │    │ 100+     │    │ "Debater" │    │ Collapse  │    │ Build a  │
+│ attack   │    │ specialized│   │ agents    │    │ duplicate │    │ working  │
+│ surface  │    │ auditors  │    │ argue for │    │ findings  │    │ exploit  │
+│          │    │ hunt bugs │    │ & against │    │           │    │ (PoC)    │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+Why it matters (results):
+
+Benchmark	Score
+CyberGym (1,507 real-world vulns)	88.45% — #1 on leaderboard
+5 years of clfs.sys MSRC cases	96% recall
+5 years of tcpip.sys MSRC cases	100% recall
+Private test driver (21 planted bugs)	21/21 found, zero false positives
+
+### Example:
+
+```
+One MDASH agent flagged a suspicious memcpy in ike_A.c that copied a security-realm identifier pointer. A second "debater" agent compared it against the correct pattern in ike_D.c (six files away), noticed the missing free, and concluded it was a real double-free bug. A third agent then constructed a proof — just two UDP packets triggering CVE-2026-33824, a critical RCE in the IKEv2 service running as LocalSystem. No single AI model could spot this alone; the orchestration of multiple agents made it possible.
+```
+
+---
