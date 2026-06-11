@@ -824,3 +824,65 @@ Output:
 ```
 
 ---
+
+day - 11
+
+## Perag
+
+### Definition:
+
+Perag (short for Personal RAG) is a local, no-cloud, command-line RAG tool that gives your AI assistant long-term memory by making your personal documents searchable. It works entirely on your machine — no data ever leaves your computer.
+
+Instead of shoving hundreds of files into an AI's context window (which would overflow it), Perag:
+Chunks your documents into small pieces
+Embeds them into vector representations
+Stores them in a local SQLite database
+Retrieves only the most relevant chunks when you ask a question
+
+It's designed as a UNIX pipeline (chunk | embed | ingest | query) — composable, transparent, and scriptable.
+
+### Example:
+
+Say you have a folder of contracts:
+
+```
+~/projects/
+├── nda_2024.pdf
+├── service-agreement.docx
+└── meeting-notes.md
+
+
+Step 1 — Initialize
+cd ~/projects
+perag init
+
+
+Step 2 — Add documents
+perag add nda_2024.pdf service-agreement.docx meeting-notes.md
+
+
+Step 3 — Ask questions to your AI assistant
+"What does the NDA say about the notice period?"
+
+Your AI assistant automatically runs perag query "notice period NDA" under the hood, retrieves the relevant chunk(s), and answers based on what's actually in your document — not a guess.
+
+What happens behind the scenes
+nda_2024.pdf
+    ↓ perag chunk
+[chunk1, chunk2, ...]
+    ↓ perag embed (local model)
+[chunk1+vector, chunk2+vector, ...]
+    ↓ perag ingest
+(sqlite-vec database)
+    ↓ perag query "notice period NDA"
+→ Returns: "The agreement shall terminate upon 30 days written notice..."
+
+
+Key points:
+✅ 100% local — no cloud, no account, no API key needed (by default)
+✅ Works with Claude Code and other CLI-based AI assistants (1/2)
+✅ Privacy-first — your documents never leave your machine
+🔗 Composable via UNIX pipes — each step is its own command
+```
+
+---
