@@ -17,12 +17,12 @@ Imagine a hotel with 4 floors and a dumbwaiter that delivers room-service orders
 
 "Room 307 → last digit is 7 → 7 mod 4 = 3 → Floor 3"
 
-Room Number	Last Digit	digit mod 4	Floor
-301	1	1 mod 4 = 1	1st floor
-405	5	5 mod 4 = 1	1st floor
-512	2	2 mod 4 = 2	2nd floor
-307	7	7 mod 4 = 3	3rd floor
-720	0	0 mod 4 = 0	4th floor (floor 0)
+Room Number Last Digit digit mod 4 Floor
+301 1 1 mod 4 = 1 1st floor
+405 5 5 mod 4 = 1 1st floor
+512 2 2 mod 4 = 2 2nd floor
+307 7 7 mod 4 = 3 3rd floor
+720 0 0 mod 4 = 0 4th floor (floor 0)
 The chef never needs to memorize which room is on which floor — the math does it instantly.
 
 The Formula
@@ -42,10 +42,10 @@ def pick_server(user_id: str, servers: list) -> str:
     # Step 1: Hash the user ID to a number
     hash_bytes = hashlib.md5(user_id.encode()).digest()
     hash_int = int.from_bytes(hash_bytes[:8], 'big')  # first 8 bytes → integer
-    
+
     # Step 2: Modulo by number of servers
     index = hash_int % len(servers)
-    
+
     return servers[index]
 
 # Usage
@@ -60,16 +60,16 @@ class SimpleHashTable:
     def __init__(self, size=10):
         self.size = size
         self.table = [None] * size
-    
+
     def _index(self, key: str) -> int:
         # Sum of ASCII values, then modulo
         total = sum(ord(char) for char in key)
         return total % self.size
-    
+
     def put(self, key: str, value):
         idx = self._index(key)
         self.table[idx] = value
-    
+
     def get(self, key: str):
         idx = self._index(key)
         return self.table[idx]
@@ -99,10 +99,10 @@ In one sentence: Turn random writes into sequential writes, then periodically ti
 Analogy — The Receptionist's Logbook
 Picture a busy doctor's office. Patients arrive constantly. The receptionist has two tools:
 
-Tool	What happens	LSM Equivalent
-📝 Logbook on the desk	Scribbles every arrival instantly, in order of arrival. Super fast — just append to the page.	Memtable + WAL (in-memory + append-only log)
-🗄️ Filing cabinet	During quiet moments, she takes names from the logbook and files them alphabetically into patient folders.	SSTables (sorted files on disk)
-♻️ Merging old folders	Eventually, she merges duplicate folders, keeping only the latest record for each patient.	Compaction
+Tool What happens LSM Equivalent
+📝 Logbook on the desk Scribbles every arrival instantly, in order of arrival. Super fast — just append to the page. Memtable + WAL (in-memory + append-only log)
+🗄️ Filing cabinet During quiet moments, she takes names from the logbook and files them alphabetically into patient folders. SSTables (sorted files on disk)
+♻️ Merging old folders Eventually, she merges duplicate folders, keeping only the latest record for each patient. Compaction
 Writing (new patient arrives): Just scribble in the logbook. Zero searching. Lightning fast.
 Reading (find patient info): Check the logbook first, then check the filing cabinet. Slightly more work for reads, but writes fly.
 
@@ -238,10 +238,10 @@ In one sentence: U-Net takes an image in and spits out a same-sized map where ea
 Analogy — The Artist's Two-Step Process
 Imagine an artist painting a detailed landscape from a blurry photo:
 
-Step	What happens	U-Net Equivalent
-1️⃣ Squinting	Steps back, squints, sees the big shapes — "There's a mountain, a lake, some trees"	Contracting path (Encoder) — captures high-level what
-2️⃣ Zooming in	Leans in close, fills in the edges, restores sharp boundaries — "The shoreline goes exactly here"	Expanding path (Decoder) — recovers precise where
-🔗 Cross-checking	Glances back at the original photo constantly so no detail is lost	Skip connections — shuttle fine details from early layers to later layers
+Step What happens U-Net Equivalent
+1️⃣ Squinting Steps back, squints, sees the big shapes — "There's a mountain, a lake, some trees" Contracting path (Encoder) — captures high-level what
+2️⃣ Zooming in Leans in close, fills in the edges, restores sharp boundaries — "The shoreline goes exactly here" Expanding path (Decoder) — recovers precise where
+🔗 Cross-checking Glances back at the original photo constantly so no detail is lost Skip connections — shuttle fine details from early layers to later layers
 Without the skip connections (cross-checking), you'd get a blurry blob. With them, you get sharp, pixel-perfect boundaries.
 
 ### Example:
@@ -366,6 +366,7 @@ The Core Challenge
      ┌────────┐      ┌────────┐      ┌────────┐
      │ GitHub │      │ Jira   │      │  Zoom  │   ...and 80+ more apps
      └────────┘      └────────┘      └────────┘
+
 You need to point every single arrow to a new Identity Provider (IdP) — without those apps ever trusting a broken or missing identity.
 
 ### Example:
@@ -400,14 +401,14 @@ In one sentence: Grab a big chunk of IDs from the database once, then hand them 
 Analogy — The Waiter's Check Numbers
 Imagine a restaurant where every order needs a unique check number, and the central office owns the master list. Three waiters are taking orders simultaneously:
 
-Approach	What happens	Problem
-❌ Call the office for every order	"Give me one check number!" → wait → get #42. Next order: call again → #43.	Slow, bottleneck, waiters standing around on the phone
-✅ Hi-Lo: Grab a block	Waiter A: "Give me 100 numbers!" → gets block #0 (covers #0–#99). Waiter B: gets block #1 (covers #100–#199). Both hand out numbers locally without calling again.	Fast, no waiting, office is barely bothered
-Role	Real World	Hi-Lo Algorithm
-Central office	Master sequence / DB table	Hi value — fetched occasionally
-Waiter's own pad	Local counter (0–99)	Lo value — incremented in memory
-Check number	Final unique order number	(Hi × blockSize) + Lo
-"Give me another block"	Waiter calls office when pad runs out	Next database fetch when Lo hits blockSize
+Approach What happens Problem
+❌ Call the office for every order "Give me one check number!" → wait → get #42. Next order: call again → #43. Slow, bottleneck, waiters standing around on the phone
+✅ Hi-Lo: Grab a block Waiter A: "Give me 100 numbers!" → gets block #0 (covers #0–#99). Waiter B: gets block #1 (covers #100–#199). Both hand out numbers locally without calling again. Fast, no waiting, office is barely bothered
+Role Real World Hi-Lo Algorithm
+Central office Master sequence / DB table Hi value — fetched occasionally
+Waiter's own pad Local counter (0–99) Lo value — incremented in memory
+Check number Final unique order number (Hi × blockSize) + Lo
+"Give me another block" Waiter calls office when pad runs out Next database fetch when Lo hits blockSize
 The office is contacted once per 100 orders, not once per order. That's the Hi-Lo magic.
 
 ### Example:
@@ -499,36 +500,35 @@ In one sentence: Tag a request at the door with a unique ID, then use that ID to
 Analogy — The Package Tracking Number
 Imagine you order a jacket online. The order triggers a chain of events:
 
-
-  🛒 Order       📦 Warehouse     🚚 Shipping     🏠 Delivery
-   System    →    System     →     Provider   →   Confirmation
-Without a tracking number	With a tracking number
-"Where's my order??" → Shrug. Call every department.	Enter tracking # → See exactly where it is
-Warehouse error? Nobody knows which order is affected.	"Order #TRK-8821 failed at warehouse — re-pick it"
-Customer complains? 20-minute investigation across 5 systems.	Search logs for TRK-8821 → instant full timeline
+🛒 Order 📦 Warehouse 🚚 Shipping 🏠 Delivery
+System → System → Provider → Confirmation
+Without a tracking number With a tracking number
+"Where's my order??" → Shrug. Call every department. Enter tracking # → See exactly where it is
+Warehouse error? Nobody knows which order is affected. "Order #TRK-8821 failed at warehouse — re-pick it"
+Customer complains? 20-minute investigation across 5 systems. Search logs for TRK-8821 → instant full timeline
 A Correlation ID is that tracking number — for every single request inside your system.
 
 How It Works
 
-  Client                    Service A            Service B            Service C
-    │                          │                    │                    │
-    │  GET /order/42           │                    │                    │
-    │  X-Correlation-ID: abc   │                    │                    │
-    │─────────────────────────▶│                    │                    │
-    │                          │  POST /inventory   │                    │
-    │                          │  X-Correlation-ID: abc                 │
-    │                          │───────────────────▶│                    │
-    │                          │                    │  PUBLISH order.paid│
-    │                          │                    │  correlationId=abc │
-    │                          │                    │───────────────────▶│
-    │                          │                    │                    │
-    │  ◀─── 200 OK ───────────│◀───────────────────│◀───────────────────│
-    │                          │                    │                    │
-    ▼                          ▼                    ▼                    ▼
-  ┌──────────────────────────────────────────────────────────────────────┐
-  │  Every log line, every message, every DB row stamped with: "abc"     │
-  │  Search "abc" → full timeline instantly                              │
-  └──────────────────────────────────────────────────────────────────────┘
+Client Service A Service B Service C
+│ │ │ │
+│ GET /order/42 │ │ │
+│ X-Correlation-ID: abc │ │ │
+│─────────────────────────▶│ │ │
+│ │ POST /inventory │ │
+│ │ X-Correlation-ID: abc │
+│ │───────────────────▶│ │
+│ │ │ PUBLISH order.paid│
+│ │ │ correlationId=abc │
+│ │ │───────────────────▶│
+│ │ │ │
+│ ◀─── 200 OK ───────────│◀───────────────────│◀───────────────────│
+│ │ │ │
+▼ ▼ ▼ ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│ Every log line, every message, every DB row stamped with: "abc" │
+│ Search "abc" → full timeline instantly │
+└──────────────────────────────────────────────────────────────────────┘
 
 ### Example:
 
@@ -550,7 +550,7 @@ def attach_correlation_id():
     correlation_id = request.headers.get('X-Correlation-ID')
     if not correlation_id:
         correlation_id = str(uuid.uuid4())
-    
+
     # Store it so every downstream call can access it
     request.correlation_id = correlation_id
     print(f"🔖 [{correlation_id}] Request started: {request.method} {request.path}")
@@ -580,7 +580,7 @@ app = Flask(__name__)
 @app.route('/check', methods=['POST'])
 def check_inventory():
     cid = request.headers.get('X-Correlation-ID', 'no-cid')
-    
+
     print(f"🏭 [{cid}] Checking inventory for item_id={request.json['item_id']}")
     print(f"🏭 [{cid}] Stock found: 23 units")
 
@@ -645,14 +645,14 @@ In one sentence: "A booth per project. A clean host. A repo that brings its own 
 Analogy — The Pop-Up Kitchen
 Imagine a chef who cooks three different cuisines — Italian, Thai, and French. Instead of cramming every ingredient and tool into one chaotic kitchen, she uses pop-up kitchen pods:
 
-Approach	What it looks like	CodingBooth
-❌ One messy kitchen	Global Node.js, Python 2.7 and 3.11, three JDKs, a broken JAVA_HOME, and a pip package you installed once in 2023 and forgot about	The "project residue" problem
-✅ Pop-up kitchen pods	Open the Italian pod → everything for pasta. Open the Thai pod → wok, fish sauce, jasmine rice. French pod → butter, wine, copper pans.	Each project has its own .booth/ folder with exactly what it needs
-Cooking Concept	Real World	CodingBooth
-Pop-up kitchen pod	A self-contained cooking station	Booth — a containerized dev environment
-Recipe card taped to the pod	Lists exactly what's inside	Boothfile — declares the environment
-Pod setup instructions	"Plug in, turn on gas, start cooking"	./booth — one command brings it up
-Cleaning up	Fold the pod away, counter is spotless	./booth down — nothing left on the host
+Approach What it looks like CodingBooth
+❌ One messy kitchen Global Node.js, Python 2.7 and 3.11, three JDKs, a broken JAVA_HOME, and a pip package you installed once in 2023 and forgot about The "project residue" problem
+✅ Pop-up kitchen pods Open the Italian pod → everything for pasta. Open the Thai pod → wok, fish sauce, jasmine rice. French pod → butter, wine, copper pans. Each project has its own .booth/ folder with exactly what it needs
+Cooking Concept Real World CodingBooth
+Pop-up kitchen pod A self-contained cooking station Booth — a containerized dev environment
+Recipe card taped to the pod Lists exactly what's inside Boothfile — declares the environment
+Pod setup instructions "Plug in, turn on gas, start cooking" ./booth — one command brings it up
+Cleaning up Fold the pod away, counter is spotless ./booth down — nothing left on the host
 
 ### Example:
 
@@ -716,9 +716,9 @@ In one sentence: "Take a fingerprint of the raw pixels straight from the GPU, th
 Analogy — The Painting Authenticator
 Imagine an art authenticator verifying that a famous painting hasn't been tampered with. She has two approaches:
 
-Approach	What happens	Result
-📸 Take a photo, then compare photos	Photo compression introduces artifacts. Two identical paintings shot with different camera settings produce different JPEGs.	"They don't match!" → false alarm 😤
-🔬 Scan the canvas directly	She places a high-res scanner directly on the original canvas, captures raw pigment data, and hashes it. Same canvas = same hash. Always.	"Hash matches. It's authentic." ✅
+Approach What happens Result
+📸 Take a photo, then compare photos Photo compression introduces artifacts. Two identical paintings shot with different camera settings produce different JPEGs. "They don't match!" → false alarm 😤
+🔬 Scan the canvas directly She places a high-res scanner directly on the original canvas, captures raw pigment data, and hashes it. Same canvas = same hash. Always. "Hash matches. It's authentic." ✅
 The photo is like a PNG screenshot — encoded, compressed, lossy. The direct scan is like the raw framebuffer — pure, unmodified pixel data from the GPU.
 
 ### Example:
@@ -750,7 +750,7 @@ def hash_framebuffer(fb: FrameBuffer) -> str:
     # In real GPU testing, you'd map the framebuffer from GPU memory:
     #   ptr = glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY)
     #   fb.raw_bytes = ptr[0 : width * height * bpp]
-    
+
     return hashlib.md5(fb.raw_bytes).hexdigest()
 
 
@@ -903,15 +903,14 @@ Imagine a high-end sushi restaurant with a conveyor belt. The kitchen is split i
 
 Rice Cooker → Fish Prep → Rolling → Plating → Customer
 
-
 Directed: Rice must be cooked before rolling. You can't roll sushi without rice.
 Acyclic: There's no "send the plated sushi back to the rice cooker" — the belt only moves forward.
 Static: The manager designed this layout Monday morning and it stays the same all week. Every order follows the exact same path.
 
 If a customer orders miso soup too, the pipeline forks:
-              ┌→ Rolling → Plating → Customer
+┌→ Rolling → Plating → Customer
 Rice Cooker ──┤
-              └→ Soup Pot → Plating → Customer
+└→ Soup Pot → Plating → Customer
 
 The soup and sushi prep can happen in parallel (they're independent), but both must hit "Plating" before reaching the customer. The DAG captures this without any manual coordination.
 
@@ -973,6 +972,119 @@ Output:
   ✅ Running load...
 
 📊 Pipeline: COMPLETE
+```
+
+### Key Concepts:
+
+1. **DAG (Directed Acyclic Graph)**: A graph with nodes (tasks) and edges (dependencies) that has no cycles.
+2. **Topological Sort**: An ordering of nodes where every dependency comes before the dependent task.
+3. **Idempotency**: Tasks should be able to run multiple times without changing the final result.
+4. **State Tracking**: Each task tracks its completion status to avoid redundant work.
+
+### Real-world Analogy:
+
+Imagine a construction project where:
+- Tasks are like building steps (foundation, framing, plumbing, etc.)
+- Dependencies are like "must be done before" relationships
+- The DAG scheduler is like a foreman ensuring steps happen in theß correct order
+
+This pattern is used in:
+- Data pipelines (Apache Airflow, Luigi)
+- Build systems (Make, Bazel)
+- Workflow engines (AWS Step Functions, Prefect)
+
+---
+
+day - 15
+
+## WASI-NN (WebAssembly System Interface for Neural Networks)
+
+### Definition:
+
+WASI-NN is a standardized API specification that lets WebAssembly (WASM) modules perform neural network inference by offloading the computation to native backends — OpenVINO, ONNX Runtime, TensorFlow Lite, or PyTorch — through a clean, host-provided interface.
+
+Normally, running ML inference inside WASM means either:
+❌ Compiling the entire ML framework (hundreds of MB) to WASM — slow and bloated.
+❌ Writing manual bindings per platform — fragile and non-portable.
+
+WASI-NN solves this by defining a small, standard set of functions (load, init_execution_context, set_input, compute, get_output) that any WASM module can call, and any WASM runtime (Wasmer, Wasmtime, WAMR) can implement by plugging in a native backend. The WASM module stays small and portable; the heavy lifting happens on the host's GPU/NPU/CPU.
+
+Analogy — The Film Lab 📸
+
+Imagine you're a photographer in the 1990s. Your camera has a tiny film roll (the WASM module). It captures the raw shot (input data) and specs like "develop with Fuji process, print 4×6 glossy." You drop the roll at a film lab (the WASM runtime with WASI-NN). The lab has:
+
+A Fuji machine (OpenVINO backend)
+A Kodak machine (ONNX Runtime backend)
+A printing press (PyTorch backend)
+
+You don't care which machine does the work — you just hand over the film and a memo ("inference request"). The lab picks the right machine, runs the chemistry, and hands you back the final prints (output tensor). You never set foot in the machine room.
+
+The film roll stays tiny. The lab does the heavy equipment work. That's WASI-NN.
+
+### Example:
+
+Running Image Classification via WASI-NN
+
+```
+;; WASM module using WASI-NN to classify an image
+;; The module sends bytes → gets back a label index
+
+(module
+  ;; Import WASI-NN functions provided by the host runtime
+  (import "wasi_nn" "load"
+    (func $load (param $bytes i32) (param $len i32)
+                (result i32)))        ;; returns graph handle
+
+  (import "wasi_nn" "init_execution_context"
+    (func $init_ctx (param $graph i32)
+                    (result i32)))    ;; returns context handle
+
+  (import "wasi_nn" "set_input"
+    (func $set_input (param $ctx i32) (param $tensor i32))  ;; void
+
+  (import "wasi_nn" "compute"
+    (func $compute (param $ctx i32)))                       ;; void
+
+  (import "wasi_nn" "get_output"
+    (func $get_output (param $ctx i32) (param $out i32)))   ;; void
+
+  ;; Memory for input image (224×224×3 = 150,528 bytes)
+  (memory (export "memory") 1)
+
+  ;; ─── Inference Flow ───
+  (func (export "classify") (param $img_offset i32) (param $img_len i32)
+                            (result i32)
+
+    ;; Step 1: Load the model from embedded bytes
+    ;;        (model stored in WASM data section at offset 0x1000)
+    i32.const 0x1000      ;; model bytes start
+    i32.const 50000       ;; model size in bytes
+    call $load
+    local.set $graph      ;; graph handle
+
+    ;; Step 2: Create an execution context
+    local.get $graph
+    call $init_ctx
+    local.set $ctx
+
+    ;; Step 3: Set the input tensor (the image)
+    local.get $ctx
+    local.get $img_offset
+    call $set_input
+
+    ;; Step 4: Run inference
+    local.get $ctx
+    call $compute
+
+    ;; Step 5: Read the result (index of highest-probability class)
+    local.get $ctx
+    i32.const 0x2000      ;; write output tensor here
+    call $get_output
+
+    ;; Return the top class index
+    i32.load 0x2000
+  )
+)
 ```
 
 ---
