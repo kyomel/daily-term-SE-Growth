@@ -1272,3 +1272,29 @@ Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]
 ...
 
 ---
+
+day - 19
+
+## Architectural Decision Record (ADR)
+
+### Definition:
+
+- Short, lightweight document that captures a significant architectural 
+  decision + context + rationale + trade-offs
+- "Document the decision, not the details"
+- Lifecycle: Proposed → Accepted → Deprecated → Superseded
+- Analogi: Ship's Captain Log — for the next captain who takes the helm 🚢
+
+### Example:
+
+```
+Full ADR document (ADR-001) for choosing PostgreSQL over DynamoDB/MongoDB 
+for a User Service migration, including:
+- Context (2.5M users, strong consistency needed)
+- Decision (PostgreSQL 16 on RDS)
+- Alternatives Considered (DynamoDB, MongoDB — with honest pros/cons)
+- Consequences (positive + negative — no perfect decision)
+- Related Decisions (links to ADR-000, ADR-003)
+```
+
+---
