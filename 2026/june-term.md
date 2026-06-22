@@ -1331,3 +1331,35 @@ UserProfile.tsrx component showcasing:
 - Framework-agnostic via plugin architecture
 - Conditional hooks = no more manual component splitting for hook rules
 - Incremental adoption (one .tsrx at a time)
+
+===
+
+day - 22
+
+## BFS Distance Field
+
+### Definition:
+
+- Distance field: grid where each cell contains distance to nearest obstacle
+- BFS (Breadth-First Search) algorithm to compute this field
+- Used in pathfinding, collision detection, shadow mapping
+- Key properties:
+  - Euclidean distance (true straight-line distance)
+  - Signed distance (negative inside obstacles)
+  - Smooth gradients (useful for interpolation)
+
+### Example:
+
+```
+Visualization of BFS distance field computation:
+  - Obstacle grid (walls, trees)
+  - Wavefront propagation from obstacles
+  - Final distance field (heatmap)
+```
+
+### Key Concepts:
+
+- BFS guarantees shortest path in unweighted grid
+- Distance field enables efficient spatial queries
+
+---
