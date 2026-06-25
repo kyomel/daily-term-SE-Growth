@@ -1568,3 +1568,502 @@ Visualization of BFS distance field computation:
 ### Key Concepts:
 
 - BFS guarantees shortest path in un
+
+---
+
+day - 24
+
+## Phantom APIs
+
+### Definition:
+
+Phantom APIs are undocumented, unapproved, and often unknown API endpoints that exist in production but were never formally reviewed, spec'd, or added to the service catalog. They are "phantom" because they serve real traffic and handle real data, yet they live outside any governance boundary — no OpenAPI spec, no design review, no security audit, no entry in the API inventory.
+
+How they're born (the AI multiplier):
+
+The primary driver of phantom APIs in 2025–2026 is AI-generated code. A developer asks an AI assistant (Copilot, Cursor, Claude, etc.) to "add an endpoint that lets support staff look up account status." The model, trained on millions of real-world codebases, generates:
+
+The requested endpoint (with auth) ✅
+An undocumented debug variant (raw ID, no scope check, maybe a ?debug=true flag) 👻
+
+The PR is reviewed for logic bugs — not for the existence of extra endpoints. The debug route looks plausible. It compiles. It passes smoke tests (which check the happy path). It ships. The spec is never updated. The gateway doesn't know about it. The route inherits default framework permissions.
+
+Now there's an endpoint in production that nobody knows about, serving data — and it's findable via automated recon tools in minutes.
+
+Why it's dangerous:
+
+| Factor | Impact |
+|--------|--------|
+| Invisible | Not in your API inventory → no monitoring, no rate limiting, no auth audit |
+| AI-generated | AI models often default to broad object access, wildcard scopes, and debug patterns from training data |
+| GraphQL multiplier | One deeply nested GraphQL query can hit multiple resolvers with missing auth — "one bug wearing one URL" becomes "a dozen bugs wearing one URL" |
+| Speed of exploitation | Average breakout time fell to 29 minutes in 2025 (from 98 min in 2021). Fastest observed: 27 seconds | (1/8)
+| Post-auth blind spot | 95% of API attacks originate from authenticated sessions — the "front door" isn't the problem, lateral movement after auth is |
+
+### Example:
+
+A CI/CD pipeline that detects and blocks phantom APIs before they reach production.
+
+```
+import json
+import hashlib
+from pathlib import Path
+from typing import Set, List, Dict, Optional
+
+
+# ─── Phase 1: Live API Inventory from Code ───
+
+def extract_routes_from_code(codebase_path: str) -> Set[str]:
+    """Parse source to find all registered HTTP routes.
+       In practice, this would use AST parsing for each framework
+       (Django URLs, FastAPI routers, Express app.use, etc.).
+    """
+    routes = set()
+
+    # Simulate extraction from a Python/FastAPI codebase
+    # Real implementation: walk AST, find @app.get, @router.post, etc.
+    known_routes = {
+        # Approved routes (from spec)
+        "GET /api/v2/users",
+        "GET /api/v2/users/{id}",
+        "POST /api/v2/users",
+        "PUT /api/v2/users/{id}",
+        "DELETE /api/v2/users/{id}",
+        "GET /api/v2/orders",
+        "GET /api/v2/orders/{id}",
+        "POST /api/v2/orders",
+        # 🚨 Phantom routes — found in code but NOT in approved spec
+        "GET /api/v2/users/{id}/debug",       # AI-generated debug endpoint
+        "GET /api/v2/users/export?format=csv", # Unticketed feature
+        "POST /api/v2/admin/users/impersonate", # Admin route with no scope check
+        "POST /api/v2/internal/user-lookup",   # Missing auth decorator
+    }
+    routes.update(known_routes)
+    return routes
+
+
+# ─── Phase 2: Approved Spec ───
+
+def load_approved_spec(spec_path: str) -> Set[str]:
+    """Load the last-approved OpenAPI spec as the source of truth."""
+    # In real life: parse OpenAPI 3.x, extract path + method combinations
+    approved = {
+        "GET /api/v2/users",
+        "GET /api/v2/users/{id}",
+        "POST /api/v2/users",
+        "PUT /api/v2/users/{id}",
+        "DELETE /api/v2/users/{id}",
+        "GET /api/v2/orders",
+        "GET /api/v2/orders/{id}",
+        "POST /api/v2/orders",
+    }
+    return approved
+
+
+# ─── Phase 3: Live Traffic Fingerprint ───
+
+def get_live_traffic_paths() -> Set[str]:
+
+"""Query the API gateway / WAF for paths receiving real traffic
+       in the last rolling window (e.g., last 24 hours).
+    """
+    # In real life: query Kong / AWS API Gateway / Envoy access logs
+    live_paths = {
+        "GET /api/v2/users",
+        "GET /api/v2/users/{id}",
+        "POST /api/v2/users",
+        "PUT /api/v2/users/{id}",
+        "DELETE /api/v2/users/{id}",
+        "GET /api/v2/orders",
+        "GET /api/v2/orders/{id}",
+        "POST /api/v2/orders",
+        # 🚨 This shouldn't exist but is being hit
+        "GET /api/v2/users/{id}/debug",
+        "POST /api/v2/internal/user-lookup",
+    }
+    return live_paths
+
+
+# ─── Phase 4: Diff Engine ───
+
+def detect_phantom_routes(
+    code_routes: Set[str],
+    approved_spec: Set[str],
+    live_traffic: Set[str],
+) -> Dict[str, List[str]]:
+    """Find routes that exist but shouldn't."""
+
+    # Phantom from code: in code but not in approved spec
+    code_phantoms = code_routes - approved_spec
+
+    # Phantom from traffic: serving traffic but not in approved spec
+    traffic_phantoms = live_traffic - approved_spec
+
+    return {
+        "code_phantoms": sorted(code_phantoms),
+        "traffic_phantoms": sorted(traffic_phantoms),
+        "both": sorted(code_phantoms & traffic_phantoms),
+    }
+
+
+# ─── Phase 5: CI/CD Gate (Blocking) ───
+
+class CIDCGate:
+    """Runs in CI/CD — blocks PRs that introduce phantom routes."""
+
+    BLOCKING_PATTERNS = [
+        "debug", "admin", "internal", "test", "dev",
+        "impersonate", "export", "bypass", "legacy",
+        "raw", "noscope", "unsecured", "temp",
+    ]
+
+    def check_pr(self, pr_changes: List[Dict]) -> bool:
+        """Return True if the PR passes (no phantoms detected)."""
+        phantom_count = 0
+
+        print("🔍 CI/CD Phantom API Scan\n")
+
+        for change in pr_changes:
+            route = f"{change['method']} {change['path']}"
+            new = change.get('new', False)
+
+            if not new:
+                continue
+
+# Check for suspicious patterns
+            for pattern in self.BLOCKING_PATTERNS:
+                if pattern in route.lower():
+                    print(f"⚠️  [BLOCKED] Suspicious route pattern '{pattern}'")
+                    print(f"    Route: {route}")
+                    print(f"    File:  {change['file']}:{change['line']}")
+                    phantom_count += 1
+                    break
+
+            # Check for missing auth decorators
+            if not change.get('has_auth', True):
+                print(f"⚠️  [BLOCKED] Missing auth decorator")
+                print(f"    Route: {route}")
+                print(f"    File:  {change['file']}:{change['line']}")
+                phantom_count += 1
+
+        if phantom_count > 0:
+            print(f"\n❌ BLOCKED: {phantom_count} potential phantom route(s) detected.")
+            print("   Each must be reviewed and approved before merge.")
+            return False
+
+        print("✅ PASS: No phantom routes detected.")
+        return True
+
+
+# ─── Run the Full Pipeline ───
+
+print("👻 Phantom API Detection Pipeline")
+print("=" * 55)
+
+# Step 1: Extract routes from code
+code_routes = extract_routes_from_code("./src")
+print(f"\n📦 Routes found in codebase: {len(code_routes)}")
+for r in sorted(code_routes):
+    marker = " 👻" if r not in load_approved_spec("spec.yaml") else ""
+    print(f"   {r}{marker}")
+
+# Step 2: Diff against approved spec
+approved = load_approved_spec("spec.yaml")
+phantoms = code_routes - approved
+print(f"\n📋 Approved routes in spec:   {len(approved)}")
+print(f"👻 Phantom routes detected:    {len(phantoms)}")
+for p in sorted(phantoms):
+    print(f"   ⚠️  {p}")
+
+# Step 3: Cross-reference with live traffic
+live = get_live_traffic_paths()
+live_phantoms = live - approved
+print(f"\n📊 Live traffic routes:         {len(live)}")
+print(f"👻 Live phantoms (not in spec): {len(live_phantoms)}")
+for p in sorted(live_phantoms):
+    print(f"   🔥 {p}")
+
+# Step 4: Simulate CI/CD gate
+
+print(f"\n{'='*55}")
+print("🔒 CI/CD Gate Check")
+PR_CHANGES = [
+    {"method": "GET", "path": "/api/v2/users/{id}/debug",
+     "file": "src/routers/users.py", "line": 142, "new": True, "has_auth": False},
+    {"method": "GET", "path": "/api/v2/orders/{id}",
+     "file": "src/routers/orders.py", "line": 89, "new": False, "has_auth": True},
+]
+
+gate = CIDCGate()
+gate.check_pr(PR_CHANGES)
+
+print(f"\n{'='*55}")
+print("🏁 Summary")
+print(f"   Approved spec routes:  {len(approved)}")
+print(f"   Code phantom routes:   {len(phantoms)}")
+print(f"   Live phantom routes:   {len(live_phantoms)}")
+print(f"   CI/CD gate result:     {'✅ PASS' if gate.check_pr([]) else '❌ BLOCKED (see above)'}")
+```
+
+---
+
+day - 25
+
+## Fog Computing
+
+### Definition:
+
+Fog Computing is a decentralized computing architecture that extends cloud capabilities to the edge of the network — sitting between the cloud (centralized data centers) and the edge devices (sensors, cameras, IoT gadgets). The name comes from the analogy that "fog is a cloud close to the ground" — it's not the edge itself, but a layer of smart, intermediate infrastructure that processes data closer to where it's generated instead of sending everything to a distant cloud.
+
+The computing continuum looks like this:
+
+┌─────────────────────────────────────────────────────────────┐
+│                    CLOUD LAYER                               │
+│   Central data centers — unlimited storage, global compute   │
+│   Latency: 100-500ms                           ▲            │
+└─────────────────────────────────────────────────┘            │
+                          │ ▲ Fewer, aggregated data           │
+                          ▼ │                                  │
+┌─────────────────────────────────────────────────────────────┐
+│                     FOG LAYER                                │
+│   Local servers / gateways — real-time processing & caching  │
+│   Latency: 10-50ms                              ▲            │
+└─────────────────────────────────────────────────┘            │
+                          │ ▲ Filtered, pre-processed data     │
+                          ▼ │                                  │
+┌─────────────────────────────────────────────────────────────┐
+│                     EDGE LAYER                               │
+│   IoT devices, sensors, actuators — data origination         │
+│   Latency: <5ms                                              │
+└─────────────────────────────────────────────────────────────┘
+
+
+What makes fog different from edge computing:
+
+| Aspect | Fog Computing | Edge Computing | (1/8)
+|--------|--------------|---------------|
+| Location | Between cloud and edge (LAN/WAN gateways) | Directly on the device (sensor, camera, etc.) |
+| Processing | Aggregates, filters, and caches data from many devices | Processes data on the individual device |
+| Computing power | Moderate — industry servers, routers, switches | Limited — constrained by device battery/CPU/RAM |
+| Scale | Regional clusters | Individual devices |
+| Network | Can coordinate between multiple edges | Single device scope |
+
+Why fog computing exists:
+
+1. Latency — Sending every IoT reading to the cloud and back can take 200-500ms. A factory robot that needs to stop within 10ms of detecting a human cannot afford that round-trip.
+2. Bandwidth — A single offshore oil rig generates ~1TB of sensor data per day. Sending all of it to the cloud is prohibitively expensive. Fog nodes filter, compress, and aggregate — only sending meaningful insights.
+3. Reliability — If the internet connection drops, the factory can't stop working. Fog nodes keep processing locally and sync when connectivity returns.
+4. Privacy — Sensitive data (medical imaging, surveillance video) can be processed within the local fog network and never leave the premises.
+
+### Example
+
+A smart factory with temperature and vibration sensors that must detect equipment anomalies in real-time — using fog nodes to process locally while only sending summaries to the cloud.
+
+```
+import time
+import json
+import random
+from dataclasses import dataclass, field
+from typing import List, Optional
+from collections import deque
+
+
+# ─── Edge Layer: Sensors ───
+
+@dataclass
+class SensorReading:
+    machine_id: str
+    sensor_type: str  # "temperature" | "vibration"
+    value: float
+    timestamp: float = field(default_factory=time.time)
+
+
+class MachineSensor:
+    """Simulates an IoT sensor on a factory machine."""
+
+    def __init__(self, machine_id: str, sensor_type: str):
+        self.machine_id = machine_id
+        self.sensor_type = sensor_type
+        self.baseline_temp = 75.0   # Celsius
+        self.baseline_vib = 0.3     # mm/s
+
+    def read(self) -> SensorReading:
+        # Simulate normal operation + occasional anomalies
+        if self.sensor_type == "temperature":
+            # Normal: 73-77°C, Anomaly: spikes to 85-95°C
+            if random.random() < 0.05:  # 5% chance of anomaly
+                value = self.baseline_temp + random.uniform(10, 20)
+            else:
+                value = self.baseline_temp + random.uniform(-2, 2)
+        else:  # vibration
+            # Normal: 0.2-0.4 mm/s, Anomaly: 1.0-3.0 mm/s
+            if random.random() < 0.05:
+                value = self.baseline_vib + random.uniform(0.7, 2.7)
+            else:
+                value = self.baseline_vib + random.uniform(-0.1, 0.1)
+
+        return SensorReading(
+            machine_id=self.machine_id,
+            sensor_type=self.sensor_type,
+            value=round(value, 2),
+        )
+
+
+# ─── Fog Layer: Local Processing Gateway ───
+
+class FogNode:
+
+"""Processes sensor data locally — only sends summaries to cloud."""
+
+    def __init__(self, node_id: str, window_size: int = 10):
+        self.node_id = node_id
+        self.window_size = window_size
+        # Rolling windows per machine + sensor type
+        self.buffers: dict[str, deque] = {}
+
+        # Alert thresholds
+        self.temp_threshold = 85.0    # °C
+        self.vib_threshold = 1.5      # mm/s
+        self.anomaly_count = 0
+
+    def _get_buffer(self, machine_id: str, sensor_type: str) -> deque:
+        key = f"{machine_id}:{sensor_type}"
+        if key not in self.buffers:
+            self.buffers[key] = deque(maxlen=self.window_size)
+        return self.buffers[key]
+
+    def process(self, reading: SensorReading) -> Optional[dict]:
+        """Process a sensor reading. Returns an alert if anomaly detected."""
+        buffer = self._get_buffer(reading.machine_id, reading.sensor_type)
+        buffer.append(reading.value)
+
+        # Check for immediate anomaly (low-latency response)
+        alert = None
+        if reading.sensor_type == "temperature" and reading.value > self.temp_threshold:
+            alert = {
+                "type": "CRITICAL",
+                "machine": reading.machine_id,
+                "sensor": "temperature",
+                "value": reading.value,
+                "message": f"🔥 Machine {reading.machine_id} overheating! "
+                           f"Temperature: {reading.value}°C (threshold: {self.temp_threshold}°C)",
+                "timestamp": reading.timestamp,
+            }
+            self.anomaly_count += 1
+
+        elif reading.sensor_type == "vibration" and reading.value > self.vib_threshold:
+            alert = {
+                "type": "WARNING",
+                "machine": reading.machine_id,
+                "sensor": "vibration",
+                "value": reading.value,
+                "message": f"⚠️ Machine {reading.machine_id} excessive vibration! "
+
+f"Vibration: {reading.value} mm/s (threshold: {self.vib_threshold} mm/s)",
+                "timestamp": reading.timestamp,
+            }
+            self.anomaly_count += 1
+
+        return alert
+
+    def summarize(self) -> dict:
+        """Generate a compact summary to send to the cloud periodically."""
+        summary = {
+            "fog_node": self.node_id,
+            "period": f"{self.window_size} readings per sensor",
+            "sensors_monitored": len(self.buffers),
+            "anomalies_detected": self.anomaly_count,
+            "machine_summaries": [],
+        }
+
+        for key, buffer in self.buffers.items():
+            machine_id, sensor_type = key.split(":")
+            avg = sum(buffer) / len(buffer) if buffer else 0
+            summary["machine_summaries"].append({
+                "machine_id": machine_id,
+                "sensor_type": sensor_type,
+                "avg_value": round(avg, 2),
+                "max_value": round(max(buffer), 2) if buffer else 0,
+                "min_value": round(min(buffer), 2) if buffer else 0,
+                "readings_count": len(buffer),
+            })
+
+        return summary
+
+
+# ─── Cloud Layer: Central Analytics ───
+
+class CloudAnalytics:
+    """Receives aggregated summaries from fog nodes — stores trends, dashboards."""
+
+    def __init__(self):
+        self.summaries: List[dict] = []
+        self.anomaly_log: List[dict] = []
+
+    def ingest_summary(self, summary: dict):
+        """Receive a fog node summary (not raw sensor data)."""
+        self.summaries.append(summary)
+        print(f"\n☁️  Cloud received fog summary from {summary['fog_node']}")
+        print(f"   Sensors monitored: {summary['sensors_monitored']}")
+        print(f"   Anomalies in this period: {summary['anomalies_detected']}")
+        for ms in summary['machine_summaries']:
+            print(f"   📊 {ms['machine_id']} | {ms['sensor_type']} | "
+                  f"avg: {ms['avg_value']} | max: {ms['max_value']} | "
+
+f"min: {ms['min_value']}")
+
+    def log_anomaly(self, alert: dict):
+        """Log real-time alerts forwarded by fog node."""
+        self.anomaly_log.append(alert)
+        print(f"🚨 {alert['message']}")
+
+
+# ─── Run the Simulation ───
+
+print("🏭 Smart Factory - Fog Computing Pipeline")
+print("=" * 60)
+
+# Setup
+edge_sensors = [
+    MachineSensor("press-01", "temperature"),
+    MachineSensor("press-01", "vibration"),
+    MachineSensor("conveyor-02", "temperature"),
+    MachineSensor("conveyor-02", "vibration"),
+    MachineSensor("welder-03", "temperature"),
+]
+
+fog = FogNode("factory-floor-1", window_size=10)
+cloud = CloudAnalytics()
+
+# Simulate 50 sensor readings (edge → fog processing)
+print("\n🏗️  Edge Sensors Generating Data...")
+print("   (Anomaly rate: ~5% per reading)")
+for i in range(50):
+    for sensor in edge_sensors:
+        # Edge: read sensor
+        reading = sensor.read()
+
+        # Fog: process locally
+        alert = fog.process(reading)
+
+        if alert:
+            # Critical: fog triggers immediate response AND forwards to cloud
+            cloud.log_anomaly(alert)
+            # In real life: fog node would also send a stop signal to the PLC
+
+print(f"\n{'='*60}")
+print("📊 Fog Node Summary Report (sent to cloud every 10 minutes)")
+fog_summary = fog.summarize()
+cloud.ingest_summary(fog_summary)
+
+# What was sent to cloud vs what was NOT sent
+traffic_reduction = 1 - (len(fog_summary['machine_summaries']) / (50 * len(edge_sensors)))
+print(f"\n{'='*60}")
+print(f"💡 Bandwidth Savings Analysis")
+print(f"   Raw sensor readings generated: {50 * len(edge_sensors)}")
+print(f"   Cloud summaries sent:           {len(fog_summary['machine_summaries'])}")
+print(f"   Bandwidth reduction:            ~{traffic_reduction*100:.1f}%")
+print(f"   Anomalies caught in real-time:  {fog.anomaly_count}")
+```
+
+---
