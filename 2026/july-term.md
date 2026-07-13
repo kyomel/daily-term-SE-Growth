@@ -1424,3 +1424,24 @@ This seemingly small change has massive implications for analytics performance:
                                (unoptimized)
                                
 ```
+
+day - 13
+
+## Isomorphic Frameworks
+
+### Definition:
+
+An Isomorphic Framework (also called Universal JavaScript) is a web framework that lets you write one codebase that runs on both the server AND the client (browser). The same code — same components, same routing, same logic — first renders on the server to produce HTML (fast initial load, SEO-friendly), then takes over in the browser to handle interactivity (smooth navigation, state management).
+
+The name comes from mathematics: in chemistry, "isomorphic" means "having the same form." In web development, it means the same component "has the same form" whether it executes on the server or in the browser.
+
+### Example:
+
+A visual flow comparison of how Server-Only, Client-Only (SPA), and Isomorphic handle the same scenario — displaying a user profile page.
+
+
+```
+
+```
+
+---
