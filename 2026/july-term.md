@@ -1570,3 +1570,147 @@ A user visits example.com/profile/alice. The page needs to fetch Alice's data fr
 ```
 
 ---
+
+day - 14
+
+## Slopsquatting
+
+### Definition:
+
+Slopsquatting is a portmanteau of "slop" (AI-generated content, especially low-quality or spammy output) and "cybersquatting" (registering domains that mimic legitimate brands). It describes a growing 2024-2026 phenomenon where attackers or opportunists register domain names, social media handles, or app store listings that impersonate legitimate products, brands, or people — but populated entirely with AI-generated content designed to trick search engines, users, and recommendation algorithms.
+
+Unlike traditional cybersquatting (where a domain sits empty or redirects to ads), slopsquatting is operationally active: the fake site looks like a real product, has AI-generated documentation, AI-generated blog posts, AI-generated customer testimonials, AI-generated GitHub repositories — everything a real project would have, except there's no actual product. The content is the product. And the product is noise.
+
+Why slopsquatting is different and more dangerous:
+
+| Aspect | Traditional Cybersquatting | Slopsquatting |
+|--------|---------------------------|---------------|
+| Effort to create | High — each site required manual content, design, and maintenance | Very low — AI generates everything: text, images, code, reviews |
+| Scale | 10-100 sites per attacker | 10,000+ sites per attacker (fully automated pipeline) |
+| Detection | Easy — empty or ad-filled sites are obvious | Hard — site looks real, has content, has "social proof" |
+| SEO manipulation | Moderate — keyword stuffing, link farms | Advanced — AI generates legitimate-looking content that search engines rank highly |
+| Lifespan | Long — requires manual takedown per domain | Short — attacker abandons and spawns 1,000 more; whack-a-mole |
+| Primary target | Brands (Nike, Google, etc.) | Open source projects, indie developers, small SaaS products |
+
+### Example:
+
+ A slopsquatting operation targeted 47 popular open-source projects simultaneously. The attacker registered domains like prisma-orm.io, tailwind-css.org, zod-schema.com, and set up AI-generated documentation sites for each. The fake sites outranked the real documentation on Google for 3 months. The attacker's estimated profit from malicious npm packages and ad revenue: ~$300,000 before the operation was disrupted. The attack cost per site: ~$12.
+
+ ```
+ ═══════════════════════════════════════════════════════════════
+   THE SCALE PROBLEM
+ ═══════════════════════════════════════════════════════════════
+ 
+                  Traditional                     Slopsquatting
+                  Cybersquatting                  
+                  ───────────────                 ─────────────
+ 
+   Sites created       5-10                     10,000+
+   per attacker
+ 
+   Content cost        Manual ($500-1,000/site)  AI-generated ($0.01/site)
+ 
+   Time to setup       1-2 weeks                 3-6 hours
+ 
+   Detection rate      90% (easy to spot)        ~30% (looks legitimate)
+ 
+   SEO effectiveness   Low (thin content)        High (rich, relevant content)
+ 
+   Takedown time       1-2 weeks                 1-3 months (by which time
+                                                  100 more exist)
+ 
+   ROI for attacker    Low (ransom model)        High (malware + ads + SEO)
+ ```
+
+ ---
+
+day - 15
+
+## The Order of Data
+
+### Definition:
+
+"The Order of Data" is a concept from database systems that describes how the order of query results affects correctness, performance, and user experience — and the hidden dangers of assuming data comes back in any particular order without explicitly specifying it. The core lesson is deceptively simple but repeatedly trips up developers: if you don't tell the database exactly what order you want, you get whatever order it feels like — and that order can change arbitrarily.
+
+The three problems that "order of data" covers are:
+
+1. Default ordering is unreliable — Different databases return unsorted data in different orders, and the same database can change its default order after updates, vacuum operations, or version upgrades
+2. Sorting unindexed columns is expensive — Sorting a column without an index can be 500-700x slower than sorting an indexed column, turning a fast query into a multi-second disaster at scale
+3. Pagination without deterministic ordering = data corruption — Using OFFSET for pagination with a non-unique sort column causes rows to appear on multiple pages, get skipped entirely, or show overlapping results
+
+### Example:
+
+A visual walkthrough of the three problems and their solutions.
+
+```
+═══════════════════════════════════════════════════════════════
+  SCENARIO: You run SELECT * FROM users LIMIT 3
+  (No ORDER BY specified)
+═══════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────┐
+  │  POSTGRESQL (Default: Insertion Order)                  │
+  │                                                         │
+  │  Insert order:                                          │
+  │    1st → Alice                                           │
+  │    2nd → Bob                                             │
+  │    3rd → Charlie                                         │
+  │    4th → Diana                                           │
+  │                                                         │
+  │  SELECT * FROM users LIMIT 3;                            │
+  │  → Alice, Bob, Charlie  ✅ (insertion order)             │
+  │                                                         │
+  │  Now UPDATE Bob's email:                                 │
+  │  → Postgres moves Bob to the END (MVCC behavior)        │
+  │                                                         │
+  │  SELECT * FROM users LIMIT 3;                            │
+  │  → Alice, Charlie, Diana  ❌ (Bob moved!)                │
+  │                                                         │
+  │  The same query returns DIFFERENT results!              │
+  └─────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────┐
+  │  MYSQL (Default: Primary Key Order / InnoDB Clustered   │
+  │        Index)                                            │
+  │                                                         │
+  │  Insert order:                                          │
+  │    id=1 → Alice                                          │
+  │    id=2 → Bob                                            │
+  │    id=3 → Charlie                                        │
+  │    id=4 → Diana                                          │
+    │                                                         │
+    │  SELECT * FROM users LIMIT 3;                            │
+    │  → Alice, Bob, Charlie  ✅ (PK order)                    │
+    │                                                         │
+    │  UPDATE Bob's email:                                     │
+    │  → MySQL keeps Bob at id=2 (clustered index is stable)  │
+    │                                                         │
+    │  SELECT * FROM users LIMIT 3;                            │
+    │  → Alice, Bob, Charlie  ✅ (still the same!)             │
+    └─────────────────────────────────────────────────────────┘
+  
+    ┌─────────────────────────────────────────────────────────┐
+    │  MONGODB (Default: Insertion Order, like Postgres)      │
+    │                                                         │
+    │  Same as Postgres — update moves document to end        │
+    │  if document grows beyond its allocated space.          │
+    │                                                         │
+    │  BUT: Updates that don't change document size           │
+    │  leave it in place. Inconsistent.                       │
+    └─────────────────────────────────────────────────────────┘
+  
+    ═══════════════════════════════════════════════════════════
+    ✅ THE FIX: Always specify ORDER BY explicitly
+    ═══════════════════════════════════════════════════════════
+  
+    SELECT * FROM users ORDER BY id LIMIT 3;
+  
+    → Works the same on Postgres, MySQL, MongoDB, SQLite,
+      SQL Server, Oracle — every time, every database.
+    → Insertions? Updates? Deletions? Vacuum? Doesn't matter.
+      ORDER BY id guarantees the same result every time.
+  
+    RULE: If you care about order (and you should), type ORDER BY.
+```
+
+---
