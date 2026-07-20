@@ -2090,3 +2090,67 @@ SCENARIO: A team needs to deploy a new "payment-service" with GPU-accelerated fr
 ```
 
 ---
+
+day - 20
+
+## Admission Control
+
+### Definition:
+
+Admission Control is a gatekeeper that intercepts requests to a system before they are persisted or executed — and either allows, denies, or mutates them based on predefined policies. It is the last line of defense before a change becomes permanent: the request has already been authenticated and authorized, but admission control checks whether it should actually happen based on operational rules, security constraints, or business logic.
+
+The concept originated in Kubernetes (where Admission Controllers intercept API server requests before pod creation), but applies broadly to any system where you need to enforce "this must always be true" rules:
+
+WHERE ADMISSION CONTROL SITS:
+═══════════════════════════════════════════════════════════════
+
+  USER REQUEST
+  (e.g., "Create a pod with privileged access")
+       │
+       ▼
+  ┌──────────────────────┐
+  │  1. Authentication   │  ← "Who are you?"
+  │   ─────────────────   │
+  │  Verifies identity   │
+  │  (JWT token, cert)   │
+  └──────────┬───────────┘
+             ▼
+  ┌──────────────────────┐
+  │  2. Authorization    │  ← "Are you allowed to do this?"
+  │   ─────────────────   │
+  │  RBAC / IAM check    │
+  │  (Can you create     │
+  │   pods at all?)      │
+  └──────────┬───────────┘
+             ▼
+  ┌──────────────────────┐
+  │  3. ADMISSION CONTROL│  ← "SHOULD this happen?"
+  │   ─────────────────   │
+  │  Policy evaluation   │
+  │  (Even though you    │
+  │  CAN create pods,   │
+  │  should this         │
+  │  PARTICULAR pod      │
+  │  be allowed?)        │
+  └──────────┬───────────┘
+             │
+     ┌───────┴───────┐
+     ▼               ▼
+  ALLOWED          DENIED
+  (created with     (rejected with
+   possible         explanation)
+   mutations)
+
+  KEY: At the admission control stage, the request passes
+  through AUTHENTICATION (who) and AUTHORIZATION (can they)
+  before reaching ADMISSION CONTROL (should they).
+
+### Example:
+
+A visual flow of how Admission Control works in Kubernetes — showing a pod creation request going through multiple admission controllers before being accepted or rejected.
+
+```
+
+```
+
+---
