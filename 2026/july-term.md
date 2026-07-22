@@ -2558,6 +2558,144 @@ A healthcare system. A doctor (Alice) needs to access a patient's medical record
 - Access to mental health records requires additional clearance
 - Auditors can view access logs but not the records themselves
 - All access is logged regardless of allow/deny
-```
+═══════════════════════════════════════════════════════════════
+  THREE ACCESS REQUESTS — THREE DIFFERENT OUTCOMES
+═══════════════════════════════════════════════════════════════
 
+
+  REQUEST A: Alice (normal doctor) tries to read Patient X's
+            standard medical record during office hours.
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  SUBJECT ATTRIBUTES:    RESOURCE ATTRIBUTES:            │
+  │  • name: Dr. Alice      • type: medical_record          │
+  │  • role: physician       • patient: Patient X           │
+  │  • specialty: cardiology • classification: standard     │
+  │  • patients: [X, Y, Z]  • dept: general_medicine        │
+  │  • dept: cardiology                                     │
+  │                          ENVIRONMENT:                   │
+  │  ACTION:                 • time: Mon 10:30 AM           │
+  │  • action: "READ"        • location: hospital_network   │
+  │                          • emergency_active: false      │
+  │                          • audit_log: maintained        │
+  └─────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              ┌──────────────────────────────────────────────┐
+              │                                              │
+              │  POLICY EVALUATION:                           │
+              │                                              │
+              │  P1: doctor CAN read patient IF              │
+              │      patient IN doctor.patients              │
+│      → Patient X IS in Alice's patients ✅   │
+              │                                              │
+              │  P2: access ALLOWED IF                        │
+              │      location = hospital_network             │
+              │      → Alice IS on hospital network ✅        │
+              │                                              │
+              │  P3: ALL access MUST be logged               │
+              │      → Audit log entry created ✅             │
+              │                                              │
+              │  RESULT: ✅ ALLOWED                           │
+              │                                              │
+              └──────────────────────────────────────────────┘
+═══════════════════════════════════════════════════════════════
+
+  REQUEST B: Alice tries to read Patient Z's MENTAL HEALTH
+             record (Alice treats Patient Z, but the record
+             has extra restrictions).
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  SUBJECT ATTRIBUTES:    RESOURCE ATTRIBUTES:            │
+  │  • name: Dr. Alice      • type: medical_record          │
+  │  • role: physician       • patient: Patient Z           │
+  │  • specialty: cardiology • classification: MENTAL HEALTH│
+  │  • patients: [X, Y, Z]  • dept: psychiatry              │
+  │  • has_mental_health                                     │
+  │    clearance: false     ENVIRONMENT:                    │
+  │                         • time: Mon 10:30 AM            │
+  │  ACTION:                 • location: hospital_network    │
+  │  • action: "READ"        • emergency_active: false       │
+  │                         • audit_log: maintained         │
+  └─────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              ┌──────────────────────────────────────────────┐
+│                                              │
+              │  POLICY EVALUATION:                           │
+              │                                              │
+              │  P1: doctor CAN read patient IF              │
+              │      patient IN doctor.patients              │
+              │      → Patient Z IS in Alice's patients ✅   │
+              │                                              │
+              │  P2: CAN read resource IF                     │
+              │      resource.classification != "MENTAL      │
+              │      HEALTH" OR                             │
+              │      subject.has_mental_health_clearance     │
+              │      = true                                  │
+              │      → Resource IS "MENTAL HEALTH" ❌         │
+              │      → Alice does NOT have clearance ❌      │
+              │                                              │
+              │  P3: emergency override?                      │
+              │      emergency_active = false → no ❌        │
+              │                                              │
+              │  RESULT: ❌ DENIED                            │
+              │  Reason: Mental health records require       │
+              │           additional clearance.              │
+              │                                              │
+              └──────────────────────────────────────────────┘
+═══════════════════════════════════════════════════════════════
+
+  REQUEST C: Emergency! An unidentified critical patient
+             arrives. Dr. Chen (ER doctor) needs to read
+             ANY available record to check medical history.
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  SUBJECT ATTRIBUTES:    RESOURCE ATTRIBUTES:            │
+  │  • name: Dr. Chen       • type: medical_record          │
+│  • role: ER_physician   • unknown patient               │
+  │  • department: emergency • classification: ANY           │
+  │  • has_emergency_flag:                                  │
+  │    true                  ENVIRONMENT:                   │
+  │                         • time: 3:00 AM                 │
+  │  ACTION:                 • location: hospital_network    │
+  │  • action: "READ"        • emergency_active: TRUE       │
+  │                          • emergency_id: E-2026-07-22   │
+  │                          • audit_log: maintained        │
+  └─────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              ┌──────────────────────────────────────────────┐
+  │                                              │
+  │  POLICY EVALUATION:                           │
+  │                                              │
+  │  P1: doctor CAN read patient IF               │
+  │      patient IN doctor.patients               │
+  │      → Unknown patient, not in list ❌         │
+  │      (Normally this would DENY)               │
+  │                                              │
+  │  P3: OVERRIDE — emergency access IF           │
+  │      subject.role = "ER_physician"           │
+  │      AND subject.has_emergency_flag = true    │
+  │      AND environment.emergency_active = true  │
+  │      → Dr. Chen IS ER physician ✅            │
+  │      → Emergency flag IS active ✅            │
+  │      → Environment emergency IS active ✅     │
+  │      → EMERGENCY OVERRIDE GRANTED ✅          │
+  │                                              │
+  │  P4: Emergency access MUST be logged with:    │
+  │      • emergency_id: E-2026-07-22             │
+  │      • reason: "unidentified critical patient"│
+  │      • time-limited: expires in 4 hours       │
+  │      • requires review within 24 hours        │
+  │      → Special audit entry created ✅         │
+  │                                              │
+    │  RESULT: ✅ ALLOWED (emergency override)      │
+    │          Access automatically expires         │
+    │          at 7:00 AM unless renewed.           │
+    │                                              │
+    └──────────────────────────────────────────────────────────┘
 ---
