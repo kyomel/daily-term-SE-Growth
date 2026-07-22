@@ -2487,3 +2487,77 @@ A developer builds postman2pytest — a tool that converts Postman API collectio
 ```
 
 ---
+
+day - 22
+
+## Attribute Based Access Control(ABAC) Pattern
+
+### Definition:
+
+Attribute-Based Access Control (ABAC) is an authorization model that grants or denies access based on attributes of the user, the resource, the action, and the environment — evaluated against a set of policies written as rules. Instead of asking "who is this user?" (RBAC) or "what list is this user on?" (ACL), ABAC asks "does the full context of this request match the policy?"
+
+ABAC evaluates multiple attributes simultaneously to make a decision:
+WHAT ABAC EVALUATES:
+═══════════════════════════════════════════════════════════════
+
+  ACCESS REQUEST: "Can Alice view the document 'Q4 Budget'?"
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  SUBJECT ATTRIBUTES          RESOURCE ATTRIBUTES        │
+  │  (Who is asking)             (What are they asking for) │
+  │  ┌──────────────────┐        ┌──────────────────────┐   │
+  │  │ Alice             │        │ document: Q4 Budget  │   │
+  │  │ department:       │        │ classification:     │   │
+  │  │   Finance         │        │   "confidential"    │   │
+  │  │ role: Analyst     │        │ owner: "Bob"        │   │
+  │  │ clearance: Level 3│        │ project: "Q4-Plan"  │   │
+  │  │ location: NYC     │        │ created: 2026-06-01 │   │
+  │  └──────────────────┘        └──────────────────────┘   │
+  │                                                         │
+  │  ACTION ATTRIBUTES            ENVIRONMENT ATTRIBUTES    │
+  │  (What do they want to do)    (What is the context)     │
+  │  ┌──────────────────┐        ┌──────────────────────┐   │
+  │  │ action: "VIEW"   │        │ time: 2:30 PM        │   │
+  │  │ method: "read"   │        │ day: Tuesday          │   │
+  │  │ via: "web-app"   │        │ ip_range: corp-vpn   │   │
+  │  │                   │        │ threat_level: normal │   │
+  │  └──────────────────┘        └──────────────────────┘   │
+  │                                                         │
+  └─────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              ┌──────────────────────────────────┐
+              │  POLICY EVALUATION ENGINE         │
+              │  ─────────────────────             │
+              │                                    │
+              │  Policy: "Finance team members    │
+              │  can VIEW confidential documents  │
+              │  during business hours from the   │
+                            │  corporate VPN."                   │
+                            │                                    │
+                            │  Alice is Finance        ✅        │
+                            │  Action is VIEW          ✅        │
+                            │  Doc is confidential     ✅        │
+                            │  Time is business hours  ✅        │
+                            │  IP is corp VPN          ✅        │
+                            │                                    │
+                            │  → ALLOW ✅                        │
+                            └──────────────────────────────────┘
+
+### Example:
+
+A visual flow of how ABAC handles a real-world scenario that would be impossible to express with roles alone.
+
+```
+A healthcare system. A doctor (Alice) needs to access a patient's medical record. The system has complex policies:
+
+- Doctors can read records of patients they are actively treating (4/12)
+- Emergency room doctors can read ANY record during an emergency
+- No one can access records from outside the hospital network (VPN required)
+- Access to mental health records requires additional clearance
+- Auditors can view access logs but not the records themselves
+- All access is logged regardless of allow/deny
+```
+
+---
