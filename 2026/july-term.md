@@ -3192,3 +3192,74 @@ A canary deployment of "payment-service v2.3" causes a 5% increase in 500 errors
 ```
 
 ---
+
+day - 28
+
+## Lift-and-Shift
+
+### Definition:
+
+Lift-and-Shift (also called rehosting) is a cloud migration strategy where you move an application from on-premises infrastructure to the cloud with minimal or no code changes. You take the existing VM, application server, or database as-is — same configuration, same architecture, same dependencies — and run it on cloud infrastructure instead. The "lift" is moving it off your hardware. The "shift" is placing it onto cloud VMs, storage, and networking.
+
+It is the fastest path to the cloud, but it leaves the application's internal architecture untouched. You get the operational benefits of the cloud (elastic infrastructure, pay-as-you-go, managed data centers) without any of the architectural benefits (auto-scaling, managed services, serverless, microservices).
+
+═══════════════════════════════════════════════════════════════
+  THE THREE CLOUD MIGRATION STRATEGIES
+═══════════════════════════════════════════════════════════════
+
+                    Effort ▼     Benefit ▲
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  REBUILD (Re-architect)                                 │
+  │  ───────────────────────                                │
+  │  "Build from scratch as cloud-native"                   │
+  │                                                         │
+  │  • Monolith → Microservices                            │
+  │  • VMs → Serverless / Containers                        │
+  │  • Self-managed DB → Managed DB (RDS, Aurora)           │
+  │  • Hours of effort: 10,000+                             │
+  │  • Cloud benefits: FULL                                 │
+  │                                                         │
+  └─────────────────────────────────────────────────────────┘
+                              ▲
+                              │
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  REPLATFORM (Lift, Tinker, and Shift)                   │
+  │  ──────────────────────────────────────                 │
+  │  "Move to cloud, make a few changes"                    │
+  │                                                         │
+  │  • VM → Managed VM (e.g., Amazon RDS for self-managed   │
+  │    MySQL)                                               │
+  │  • Change the database connection string                │
+  │  • Containerize without changing the app code           │
+  │  • Hours of effort: 100-500                             │
+  │  • Cloud benefits: PARTIAL                              │
+  │                                                         │
+  └─────────────────────────────────────────────────────────┘
+                              ▲
+                              │
+                                ┌─────────────────────────────────────────────────────────┐
+                                │                                                         │
+                                │  LIFT-AND-SHIFT (Rehost)                                │
+                                │  ───────────────────────────                             │
+                                │  "Move it as-is"                                        │
+                                │                                                         │
+                                │  • Physical server → EC2 instance                       │
+                                │  • On-prem VM → Cloud VM (same OS, same config)        │
+                                │  • On-prem DB → Cloud VM running the same DB            │
+                                │  • Hours of effort: 10-50 per workload                  │
+                                │  • Cloud benefits: MINIMAL (infrastructure only)        │
+                                │                                                         │
+                                └─────────────────────────────────────────────────────────┘                            
+
+### Example:
+
+A visual walkthrough of the 5-question decision framework from the DZone article — helping you decide for each workload whether to lift-and-shift or modernize.
+
+```
+
+```
+
+---
