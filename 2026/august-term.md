@@ -1900,3 +1900,338 @@ A company builds a "book reviews" product — with a web app, a mobile app, and 
 ```
 
 ---
+
+day - 24
+
+## Chain of Responsibility
+
+### Definition:
+
+Chain of Responsibility is a behavioral design pattern where a request is passed along a chain of handlers, and each handler decides either to process the request or pass it to the next handler in the chain — until one of them handles it. Instead of the sender knowing exactly which object should handle a request, the request flows through a sequence of potential handlers, and the first one that can handle it does.
+
+The core idea: decouple the sender of a request from its receiver. The sender doesn't need to know who will process it or how — it just sends the request into the chain, and the chain figures out which handler is responsible.
+
+THE CHAIN OF RESPONSIBILITY:
+═══════════════════════════════════════════════════════════════
+
+  A request enters the chain and flows through handlers:
+
+  ┌────────────┐   ┌────────────┐   ┌────────────┐   ┌────────────┐
+  │            │   │            │   │            │   │            │
+  │  REQUEST   │──►│ Handler A  │──►│ Handler B  │──►│ Handler C  │
+  │            │   │            │   │            │   │            │
+  └────────────┘   └─────┬──────┘   └─────┬──────┘   └─────┬──────┘
+                         │                │                │
+                    ┌────┴─────┐    ┌────┴─────┐     ┌─────┴─────┐
+                    │ Can I    │    │ Can I    │     │ Can I     │
+                    │ handle   │    │ handle   │     │ handle    │
+                    │ this?    │    │ this?    │     │ this?     │
+                    └────┬─────┘    └────┬─────┘     └─────┬─────┘
+                         │              │                  │
+                   YES ──┴── process    │                  │
+                        (chain stops)   │                  │
+                                        │                  │
+                                   NO ───┘                  │
+                            pass to next handler            │
+                                                            │
+                                                       NO ───┘
+                                                  (unhandled —
+                                                   or a default
+                                                   handler)
+
+### Example:
+
+A visual walkthrough of the Chain of Responsibility pattern in three common real-world uses.
+
+```
+═══════════════════════════════════════════════════════════════
+  THE PATTERN: HTTP requests flow through middleware handlers
+═══════════════════════════════════════════════════════════════
+
+  An incoming HTTP request passes through a chain:
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  Request ──► [AUTHENTICATION] ──► [LOGGING] ──►         │
+  │                    │                │                   │
+  │                    ▼                ▼                   │
+  │              can it handle?    can it handle?           │
+  │              (check token)     (log the request)        │
+  │                    │                │                   │
+  │              ┌─────┴────┐     ┌─────┴────┐              │
+  │              │ NO token │     │  always  │              │
+  │              │ → reject │     │  logs &  │              │
+  │              │  401     │     │  passes  │              │
+  │              └──────────┘     └──────────┘              │
+  │                                                    │
+  │         ──► [CACHING] ──► [ROUTING] ──► [final handler] │
+  │               │              │                          │
+  │         can it handle?  can it handle?                  │
+  │         (cache hit?     (which controller?)            │
+  │          → return       → call controller)             │
+  │         (miss → pass)                                  │
+  │                                                         │
+  │  Each middleware handler either handles the request     │
+  │  or passes it to the next. This chain is how express    │
+  │  /Koa/ASP.NET middleware pipelines work.                │
+  │                                                         │
+  └─────────────────────────────────────────────────────────┘
+```
+
+---
+
+day - 25
+
+## Homomorphic Encryption
+
+### Definition:
+
+Homomorphic Encryption is a cryptographic technique that lets you perform computations on encrypted data WITHOUT decrypting it first — producing an encrypted result that, when decrypted, matches the result you would have gotten from computing on the original plaintext data.
+
+It's the "holy grail" of data privacy: it allows an untrusted party (like a cloud server) to process your sensitive data while never seeing the actual data — only its encrypted form. The server does useful work on your behalf, but learns nothing about your information in the process.
+
+NORMAL ENCRYPTION vs. HOMOMORPHIC ENCRYPTION:
+═══════════════════════════════════════════════════════════════
+
+  NORMAL ENCRYPTION (Must decrypt to compute):
+  ──────────────────────────────────────────────────────────
+
+  ┌──────────┐  encrypt  ┌──────────┐  decrypt  ┌──────────┐
+  │ Data     │ ────────► │ Encrypted│ ────────► │ Data     │
+  │ "salary" │           │  data    │           │ "salary" │
+  └──────────┘           └────┬─────┘           └────┬─────┘
+                              │                      │
+                              ▼                      ▼
+                      ┌───────────────┐      ┌───────────────┐
+                      │  Cloud server │      │  COMPUTE:     │
+                      │  CANNOT work  │      │  salary × 2   │
+                      │  on this —    │      │  (on plaintext)│
+                      │  it's locked  │      └───────────────┘
+                      └───────────────┘
+                      ⚠️ To do the work, the server MUST
+                         see the plaintext (a privacy risk)
+
+
+  HOMOMORPHIC ENCRYPTION (Compute on encrypted data):
+  ──────────────────────────────────────────────────────────
+
+  ┌──────────┐  encrypt  ┌──────────┐  COMPUTE  ┌────────────┐
+  │ Data     │ ────────► │ Encrypted│ ────────► │ Encrypted  │
+  │ "salary" │           │  data    │           │ result     │
+  └──────────┘           └────┬─────┘           └─────┬──────┘
+                              │                       │
+                              ▼                       │
+                      ┌───────────────┐               │
+                      │  Cloud server │               │
+                      │  COMPUTES ON  │               │
+                      │  ENCRYPTED    │               │
+                      │  salary × 2   │               │
+                      │  (never sees  │               │
+                      │  the number)  │               │
+                      └───────────────┘               │
+                      ▼ decrypt
+                                                                    ┌───────────────┐
+                                                                    │ Result        │
+                                                                    │ "salary × 2"  │
+                                                                    │ (correct!)    │
+                                                                    └───────────────┘
+                      
+                        The server computed on the ENCRYPTED data and never saw
+                        the plaintext. Only the owner can decrypt the result.
+
+### Example:
+
+A visual walkthrough of homomorphic encryption in two real-world use cases.
+
+```
+Privacy-Preserving Healthcare Analytics
+═══════════════════════════════════════════════════════════════
+  THE GOAL: Compute statistics across hospitals' patient data
+  WITHOUT any hospital revealing its private patient records.
+═══════════════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  Hospital A            Hospital B          Hospital C   │
+  │  ┌──────────────┐      ┌──────────────┐    ┌──────────┐ │
+  │  │ Patient data │      │ Patient data │    │Patient   │ │
+  │  │ (private)    │      │ (private)    │    │ data     │ │
+  │  └──────┬───────┘      └──────┬───────┘    └────┬─────┘ │
+  │         │ encrypt            │ encrypt         │ encrypt│
+  │         ▼                    ▼                 ▼        │
+  │  ┌──────────────┐      ┌──────────────┐    ┌──────────┐ │
+  │  │ Encrypted    │      │ Encrypted    │    │ Encrypted│ │
+  │  │ A            │      │ B            │    │ C        │ │
+  │  └──────┬───────┘      └──────┬───────┘    └────┬─────┘ │
+  │         └──────────┬─────────┴────────┬─────────┘       │
+  │                    ▼                  ▼                  │
+  │          ┌────────────────────────────────────┐         │
+  │          │  RESEARCH SERVER (homomorphic)     │         │
+  │          │  Computes on ALL encrypted data:   │         │
+  │          │  (A + B + C) / 3 = average         │         │
+  │          │  • Never decrypts A, B, or C       │         │
+  │          │  • Never sees any patient record   │         │
+  │          │  → Returns ENCRYPTED average       │         │
+  │          └─────────────────┬──────────────────┘         │
+  │                            │                            │
+  │                            ▼ decrypt (by key holder)    │
+  │          ┌────────────────────────────────────┐         │
+    │          │  RESULT: "Average patient age =    │         │
+    │          │  42.3 years" (computed correctly,  │         │
+    │          │  but no hospital's data exposed)   │         │
+    │          └────────────────────────────────────┘         │
+    │                                                         │
+    │  ✅ Research happens on real data                       │
+    │  ✅ No patient records ever exposed                      │
+    │  ✅ Compliant with privacy regulations (GDPR, HIPAA)    │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+```
+
+---
+
+day - 26
+
+## Rate-Aware Processing Pattern (Rate-Aware DB/API Patterns)
+
+### Definition:
+
+The Rate-Aware Processing Pattern is a design pattern that respects the rate limits of an external system (an API, a database, a service) while maximizing throughput — by tracking how many requests have been sent, checking remaining capacity before each request, and waiting when the limit is reached. It's the pattern that keeps you from "hitting the API wall" while still moving as fast as the system allows.
+
+The core tension it solves: every external system has limits (X requests per minute, Y operations per second). Ignore them and your system breaks (requests fail, throttled, or rejected). Respect them blindly and you leave performance on the table. The rate-aware pattern tracks the limit precisely so you use all of it — without exceeding it.
+
+THE PROBLEM THE PATTERN SOLVES:
+═══════════════════════════════════════════════════════════════
+
+  THE NAIVE APPROACH (Fire everything at once):
+  ──────────────────────────────────────────────────────────
+
+  You have 500 items to process. The API allows 60 req/min.
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  500 items ──► [fire all 500 at once]                   │
+  │                    │                                    │
+  │                    ▼                                    │
+  │  ┌────────────────────────────────────────────┐         │
+  │  │  60 requests succeed (under the limit)    │         │
+  │  │  440 requests fail (rate-limited / 429)   │         │
+  │  │                                            │         │
+  │  │  ❌ Now you need:                          │         │
+  │  │  • Retry logic for the 440 failures       │         │
+  │  │  • Error handling everywhere              │         │
+  │  │  • Processing time just TRIPLED           │         │
+  │  │                                            │         │
+  │  │  The system broke because it ignored      │         │
+  │  │  the rate limit.                          │         │
+  │  └────────────────────────────────────────────┘         │
+  │                                                         │
+  └─────────────────────────────────────────────────────────┘
+
+  THE RATE-AWARE APPROACH (Respect the limit, maximize speed):
+  ──────────────────────────────────────────────────────────
+
+  500 items ──► [processor tracks rate]
+                    │
+                    ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  Track 3 things:                                        │
+  │  1. Requests sent in the current window                 │
+  │  2. When the window resets                              │
+  │  3. Max allowed per window                              │
+    │                                                         │
+    │  Before each request:                                   │
+    │  • Have capacity? → send it                             │
+    │  • No capacity? → wait until the window resets          │
+    │                                                         │
+    │  → All 500 items process smoothly at the max rate       │
+    │  → No 429 failures, no retry storm, no tripled time     │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+
+### Example:
+
+A visual walkthrough of the rate-aware processing pattern applied to a real workload.
+
+```
+A system needs to process 500 customer records through an AI API that allows **60 requests per minute**.
+═══════════════════════════════════════════════════════════════
+  HOW RATE-AWARE PROCESSING WORKS (Step by Step)
+═══════════════════════════════════════════════════════════════
+
+  Minute 1 (60 req/min allowed):
+  ┌─────────────────────────────────────────────────────────┐
+  │                                                         │
+  │  Request 1 → check: 0/60 used, have capacity → SEND    │
+  │  Request 2 → check: 1/60 used, have capacity → SEND    │
+    │  ...                                                   │
+    │  Request 60 → check: 59/60 used → SEND (limit reached) │
+    │                                                         │
+    │  Request 61 → check: 60/60 used, NO capacity → WAIT    │
+    │             → sleep until window resets                │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+  
+    Window resets →
+    ┌─────────────────────────────────────────────────────────┐
+    │                                                         │
+    │  Request 61 → check: 0/60 used, have capacity → SEND    │
+    │  ... process next 60 ...                                │
+    │                                                         │
+    │  (repeat each minute until all 500 are done)            │
+    │                                                         │
+    │  Result: ~500 records in ~9 minutes, no failures.       │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+    ═══════════════════════════════════════════════════════════════
+      KEY TECHNIQUE: USE THE API'S OWN HEADERS, NOT GUESSES
+    ═══════════════════════════════════════════════════════════════
+    
+      ┌─────────────────────────────────────────────────────────┐
+      │                                                         │
+      │  Many APIs (like Anthropic) return rate-limit info      │
+      │  in the response headers:                               │
+      │                                                         │
+      │  Response header:                                       │
+      │  │  X-RateLimit-Remaining: 32       ← requests left    │
+      │  │  X-RateLimit-Reset: 45           ← seconds until    │
+      │  │                                    window resets     │
+      │                                                         │
+      │  → Use these headers to know exactly how much capacity  │
+        │    you have left. More accurate than tracking yourself. │
+        │                                                         │
+        │  KEY: Don't guess the limit. Let the API tell you.      │
+        │                                                         │
+        └─────────────────────────────────────────────────────────┘
+        ═══════════════════════════════════════════════════════════════
+          ADAPTIVE RATE MANAGEMENT (The Advanced Version)
+        ═══════════════════════════════════════════════════════════════
+        
+          Static rate limiting works, but leaves performance on the
+          table. Adaptive rate management is smarter:
+        
+          ┌─────────────────────────────────────────────────────────┐
+          │                                                         │
+          │  START: Begin at 50% of the stated limit                │
+          │  │                                                      │
+          │  ├─ If NO errors after 100 requests ──► bump to 75%     │
+          │  │    │                                                 │
+          │  │    └─ If still clean ──► bump to 90%                 │
+          │  │         │ (never go to 100% — other processes        │
+          │  │         │  might share your quota)                   │
+          │  │                                                      │
+          │  │  If you get a 429 (rate limit):                      │
+          │  └─► CUT your rate in half immediately                 │
+          │      │                                                  │
+          │      └─ Then ramp back up slowly                        │
+          │                                                         │
+          │  This is the SAME logic TCP uses for network            │
+          │  congestion control — start conservative, ramp up,      │
+          │  back off hard on failure, ramp up again. It works.     │
+          │                                                         │
+          └─────────────────────────────────────────────────────────┘
+          ═══════════════════════════════════════════════════════════════
+```
+
+---
